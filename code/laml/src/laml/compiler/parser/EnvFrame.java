@@ -38,12 +38,16 @@ public class EnvFrame {
             this.name = name;
             this.type = type;
             this.definition = definition;
-            if (definition.code.size() == 0) {
-                throw new RuntimeException(
-                        "Variable definition cannot be 0 lines.");
+            // TODO(gkanwar): Figure out how to distinguish defined vs.
+            // undefined names
+            /*
+             * if (definition.code.size() == 0) { throw new RuntimeException(
+             * "Variable definition cannot be 0 lines."); }
+             */
+            if (definition.code.size() > 0) {
+                // Annotate the variable definition
+                definition.code.get(0).setComment("Define " + name);
             }
-            // Annotate the variable definition
-            definition.code.get(0).setComment("Define " + name);
         }
 
         /**

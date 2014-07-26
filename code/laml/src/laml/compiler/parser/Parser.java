@@ -1,6 +1,8 @@
 package laml.compiler.parser;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import laml.compiler.Line;
 import laml.compiler.RelativeProgram;
@@ -10,12 +12,22 @@ import laml.compiler.lexer.LexedProgram;
 import laml.compiler.lexer.LexerNode;
 import laml.compiler.lexer.LexerNode.NodeType;
 import laml.compiler.parser.EnvFrame.Binding;
+import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 
 public class Parser {
     /**
      * Parse a node to produce compiled code.
+     * 
+     * @param functionNode lexer-generated node containing the token and
+     *            children
+     * @param env environment frame with parent pointer, used to look up and add
+     *            symbols
+     * @param globalFuncMap map of global function names to parser functions.
+     *            These names are only used for label generation, so they should
+     *            be a unique generated name.
      */
-    public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env) {
+    public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env,
+            Map<String, ParserFunction> globalFuncMap) {
         CodeSequence c = new CodeSequence();
         if (functionNode.type == NodeType.VARIABLE) {
             try {
@@ -42,33 +54,35 @@ public class Parser {
                     throw new RuntimeException("+ takes two arguments");
                 }
                 CodeSequence buildArg1 = parseNode(
-                        functionNode.children.get(0), env);
+                        functionNode.children.get(0), env, globalFuncMap);
                 CodeSequence buildArg2 = parseNode(
-                        functionNode.children.get(1), env);
+                        functionNode.children.get(1), env, globalFuncMap);
                 c.code.addAll(buildArg1.code);
                 c.code.addAll(buildArg2.code);
                 c.code.add(new Line(Arrays
                         .asList(new Token(TokenType.OP, "ADD")), ""));
             } else if (functionNode.token.equals("begin")) {
                 for (LexerNode child : functionNode.children) {
-                    CodeSequence childCode = parseNode(child, env);
+                    CodeSequence childCode = parseNode(child, env,
+                            globalFuncMap);
                     c.code.addAll(childCode.code);
                 }
             } else if (functionNode.token.equals("define")) {
-                System.err.println("Parsing define");
                 if (functionNode.children.size() != 2) {
-                    throw new RuntimeException("define takes two arguments");
+                    throw new RuntimeException(
+                            "define takes two arguments: the binding and definition");
                 }
                 LexerNode binding = functionNode.children.get(0);
                 if (binding.type != NodeType.VARIABLE) {
-                    // We can do something like (define (x) (+ x 1)) yet.
+                    // We can't do implicit lambda definition like
+                    // (define (x) (+ x 1)) yet.
                     // Need to do:
                     // (define x (lambda (x) (+ x 1))).
                     throw new RuntimeException(
                             "define doesn't support argument-style binding shortcuts yet");
                 }
                 CodeSequence definition = parseNode(
-                        functionNode.children.get(1), env);
+                        functionNode.children.get(1), env, globalFuncMap);
                 // TODO(gkanwar): Add typing, this just assumes everything is
                 // an int for now, and never bothers to check.
                 Binding envBinding = new Binding(binding.token,
@@ -79,7 +93,47 @@ public class Parser {
                 // will be lifted to the beginning of the function call, where
                 // a new environment scope is created and defined.
 
-            } else {
+            }
+            else if (functionNode.token.equals("lambda")) {
+                if (functionNode.children.size() != 2) {
+                    throw new RuntimeException(
+                            "lambda takes two arguments: the binding and definition");
+                }
+                EnvFrame newEnv = new EnvFrame(env);
+                // Hack to check for list of bindings; they are interpreted by
+                // the lexer as a function call, because really they would be,
+                // but we're just faking some post-processing here instead.
+                LexerNode bindingNode = functionNode.children.get(0);
+                if (bindingNode.type != NodeType.FUNCTION) {
+                    throw new RuntimeException(
+                            "lambda first arg must be a list of bindings");
+                }
+                // First binding pulled from token, the rest from children
+                // No bindings have code definitions -- as arguments it's the
+                // caller's responsibility to define these.
+                newEnv.addBinding(bindingNode.token, new Binding(
+                        bindingNode.token, ParserDataType.INTEGER,
+                        new CodeSequence()));
+                for (LexerNode bindingChild : bindingNode.children) {
+                    if (bindingChild.type != NodeType.VARIABLE) {
+                        throw new RuntimeException(
+                                "lambda bindings must all be var type");
+                    }
+                    newEnv.addBinding(bindingChild.token, new Binding(
+                            bindingChild.token, ParserDataType.INTEGER,
+                            new CodeSequence()));
+                }
+                CodeSequence definition = parseNode(
+                        functionNode.children.get(1), newEnv, globalFuncMap);
+                String uniqueName = "asdf"; // TODO(gkanwar): Get unique name
+                globalFuncMap.put(uniqueName, new ParserFunction(uniqueName,
+                        newEnv, definition));
+                c.code.add(new Line(Arrays.asList(
+                        new Token(TokenType.OP, "LDF"),
+                        new Token(TokenType.LABEL, uniqueName)),
+                        ""));
+            }
+            else {
                 throw new RuntimeException("Unknown token: "
                         + functionNode.token);
             }
@@ -93,9 +147,14 @@ public class Parser {
     public static RelativeProgram parseProgram(LexedProgram lexProg) {
         RelativeProgram prog = new RelativeProgram();
         EnvFrame rootEnv = new EnvFrame();
-        CodeSequence mainCode = parseNode(lexProg.rootNode, rootEnv);
+        Map<String, ParserFunction> globalFuncMap = new HashMap<String, ParserFunction>();
+        CodeSequence mainCode = parseNode(lexProg.rootNode, rootEnv,
+                globalFuncMap);
         ParserFunction mainFunc = new ParserFunction("main", rootEnv, mainCode);
         prog.addLabeledFunctions(mainFunc.toLabeledFunctions());
+        for (ParserFunction func : globalFuncMap.values()) {
+            prog.addLabeledFunctions(func.toLabeledFunctions());
+        }
         return prog;
     }
 }
