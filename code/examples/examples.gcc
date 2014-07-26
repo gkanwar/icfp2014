@@ -1,0 +1,2 @@
+(define step (lambda (ai world) (cons ai 2)))
+(define main (lambda (world x) (cons 0 step)))
