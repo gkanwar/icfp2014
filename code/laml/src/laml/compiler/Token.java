@@ -4,7 +4,7 @@ package laml.compiler;
  * A single GCC assembly token.
  */
 public class Token {
-    enum TokenType {
+    public enum TokenType {
         LABEL, CONST, OP
     };
 

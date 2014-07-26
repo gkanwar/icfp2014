@@ -2,6 +2,7 @@ package laml.compiler.lexer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
 
@@ -36,19 +37,18 @@ public class LexedProgram {
     }
 
     /**
-     * Check whether the stream is done. Check available as a shortcut, but only
-     * trust trying to read the character, since available() is only an
-     * estimate.
+     * Check whether the stream is done by reading in a character and checking
+     * for the special -1 value.
      */
     public static boolean isStreamDone(PushbackInputStream is) {
         try {
-            if (is.available() == 0) {
-                return true;
-            }
             int next;
             next = is.read();
             is.unread(next);
-            return next == 255;
+            // Depending on the underlying input stream, we'll get -1 or 255.
+            // ByteArrayStream gives 255, since we're dealing in bytes, but
+            // char is unicode (two bytes).
+            return next == 255 || next == -1;
         } catch (IOException e) {
             return true;
         }
@@ -153,14 +153,15 @@ public class LexedProgram {
         }
     }
 
-    public static LexedProgram lexProgramString(String progString) {
+    /**
+     * Lex the program fed in through the given input stream.
+     */
+    public static LexedProgram lexProgram(InputStream progIn) {
         // All programs wrapped in a begin
         LexerNode root = new LexerNode(NodeType.FUNCTION, "begin");
         LexedProgram prog = new LexedProgram(root);
 
-        PushbackInputStream is = new PushbackInputStream(
-                new ByteArrayInputStream(progString.getBytes(Charset
-                        .defaultCharset())));
+        PushbackInputStream is = new PushbackInputStream(progIn);
         while (!isStreamDone(is)) {
             eatWhitespace(is);
             if (isStreamDone(is)) {
@@ -170,5 +171,15 @@ public class LexedProgram {
             root.children.add(node);
         }
         return prog;
+    }
+
+    /**
+     * Helper function to lex a program from string. It's not recommended to use
+     * this for the main compiling flow.
+     */
+    public static LexedProgram lexProgramString(String progString) {
+        InputStream in = new ByteArrayInputStream(progString.getBytes(Charset
+                .defaultCharset()));
+        return lexProgram(in);
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LexerNode {
-    enum NodeType {
+    public enum NodeType {
         FUNCTION, VARIABLE
     };
 
