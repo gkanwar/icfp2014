@@ -1,5 +1,6 @@
 package laml.compiler;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,14 @@ public class Line {
 
     public Line(List<Token> code, String comment) {
         this.code = code;
+        this.comment = comment;
+    }
+
+    /**
+     * Setter for the comment section of the line. Compiler will want to
+     * annotate code.
+     */
+    public void setComment(String comment) {
         this.comment = comment;
     }
 
@@ -62,5 +71,17 @@ public class Line {
         }
         sb.append(comment);
         return sb.toString();
+    }
+
+    public static Line makeLabelDef(String label, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.LABEL_DEF, label)),
+                comment);
+    }
+
+    public static Line makeRtn(String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "RTN")),
+                comment);
     }
 }

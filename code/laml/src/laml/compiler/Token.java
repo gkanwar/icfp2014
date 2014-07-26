@@ -5,7 +5,7 @@ package laml.compiler;
  */
 public class Token {
     public enum TokenType {
-        LABEL, CONST, OP
+        LABEL, CONST, OP, LABEL_DEF
     };
 
     private String value;
@@ -13,11 +13,17 @@ public class Token {
     public final TokenType type;
 
     public Token(TokenType type, String value) {
-        if (type != TokenType.LABEL && type != TokenType.OP) {
+        if (type != TokenType.LABEL &&
+                type != TokenType.OP &&
+                type != TokenType.LABEL_DEF) {
             throw new RuntimeException(
                     "String token must be of type LABEL, REG, or OP");
         }
-        this.value = value;
+        if (type == TokenType.LABEL_DEF) {
+            this.value = value + ":";
+        } else {
+            this.value = value;
+        }
         this.type = type;
     }
 

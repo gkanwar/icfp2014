@@ -15,20 +15,30 @@ import laml.compiler.Token.TokenType;
 public class RelativeProgram {
     private List<Line> lines;
     private Map<String, Integer> labels;
+    // Where to place the next labeled function
+    private int nextAddr;
 
     public RelativeProgram() {
         lines = new ArrayList<Line>();
         labels = new HashMap<String, Integer>();
+        nextAddr = 0;
     }
 
-    public void addLabelledFunction(LabelledFunction function) {
+    public void addLabeledFunction(LabeledFunction function) {
         if (labels.containsKey(function.label)) {
             throw new RuntimeException("Duplicated label definition "
                     + function.label);
         }
 
-        labels.put(function.label, function.getStartAddr());
-        lines.addAll(function.lines);
+        labels.put(function.label, nextAddr);
+        lines.addAll(function.getCode().code);
+        nextAddr += function.getNumInstructions();
+    }
+
+    public void addLabeledFunctions(List<LabeledFunction> functions) {
+        for (LabeledFunction f : functions) {
+            addLabeledFunction(f);
+        }
     }
 
     /**
@@ -47,7 +57,7 @@ public class RelativeProgram {
             String relativeProgramString) {
         RelativeProgram p = new RelativeProgram();
         String[] lines = relativeProgramString.split("\n");
-        LabelledFunction currentFunc = null;
+        LabeledFunction currentFunc = null;
         for (String l : lines) {
             String code;
             String comment;
@@ -61,8 +71,7 @@ public class RelativeProgram {
                 comment = "";
             }
 
-            List<Token> tokens = new ArrayList<Token>();
-            String[] tokenStrings = code.split("\\s+");
+            String[] tokenStrings = code.trim().split("\\s+");
             // Special case for empty line
             if (tokenStrings.length == 0) {
                 continue;
@@ -76,12 +85,9 @@ public class RelativeProgram {
                 // New label means start new LabelledFunction
                 int nextAddr = 0;
                 if (currentFunc != null) {
-                    p.addLabelledFunction(currentFunc);
-                    nextAddr = currentFunc.getStartAddr()
-                            + currentFunc.getNumInstructions();
+                    p.addLabeledFunction(currentFunc);
                 }
-                currentFunc = new LabelledFunction(label);
-                currentFunc.setStartAddr(nextAddr);
+                currentFunc = new LabeledFunction(label);
                 continue;
             }
             List<Token> codeTokens = new ArrayList<Token>();
@@ -115,7 +121,7 @@ public class RelativeProgram {
         }
         // Add the last labelled function
         if (currentFunc != null) {
-            p.addLabelledFunction(currentFunc);
+            p.addLabeledFunction(currentFunc);
         }
         return p;
     }

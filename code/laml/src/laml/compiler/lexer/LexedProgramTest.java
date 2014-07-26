@@ -13,6 +13,8 @@ public class LexedProgramTest {
         String valid2 = "asdf_asdf_adsf";
         String valid3 = "test12345678!@#$%^&*";
         LexedProgram.checkValidToken(valid1);
+        LexedProgram.checkValidToken(valid2);
+        LexedProgram.checkValidToken(valid3);
     }
 
     @Test(expected = RuntimeException.class)
