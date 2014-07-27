@@ -1,0 +1,230 @@
+DUM 9 ; main bindings
+LDC 0 ; Define nil
+LDF 27 ; Define null?
+LDF 45 ; Define list-ref
+LDF 113 ; Define list-size
+LDF 128 ; Define tuple-size
+LDF 83 ; Define map
+LDF 183 ; Define filter
+LDF 148 ; Define fold-left
+LDF 72 ; Define list-extend
+LDF 13 ; Load main_$body$
+RAP 9 ; Call main_$body$
+RTN ; main return
+
+LDF 105 ; 
+LDC 10 ; 
+LDC 1 ; 
+LDC 2 ; 
+LDC 3 ; 
+LDC 4 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+CONS ; 
+LD 0 7 ; Var fold-left
+AP 3 ; Func call fold-left
+RTN ; main_$body$ return
+
+DUM 0 ; func0 bindings
+LDF 31 ; Load func0_$body$
+RAP 0 ; Call func0_$body$
+RTN ; func0 return
+
+LD 1 0 ; Var l
+ATOM ; 
+RTN ; func0_$body$ return
+
+LD 1 0 ; Var l
+CAR ; 
+JOIN ; func1 join
+
+LD 1 0 ; Var l
+CDR ; 
+LD 1 1 ; Var index
+LDC 1 ; 
+SUB ; 
+LD 2 2 ; Var list-ref
+AP 2 ; Func call list-ref
+JOIN ; func2 join
+
+DUM 0 ; func3 bindings
+LDF 49 ; Load func3_$body$
+RAP 0 ; Call func3_$body$
+RTN ; func3 return
+
+LD 1 1 ; Var index
+LDC 0 ; 
+CEQ ; 
+SEL 34 37 ; Sel on predicate (= index 0 )
+RTN ; func3_$body$ return
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 1 ; Func call func
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 5 ; Var map
+AP 2 ; Func call map
+CONS ; 
+JOIN ; func11 join
+
+LDC 1 ; 
+LD 1 0 ; Var l
+CDR ; 
+LD 2 3 ; Var list-size
+AP 1 ; Func call list-size
+ADD ; 
+JOIN ; func5 join
+
+DUM 0 ; func23 bindings
+LDF 76 ; Load func23_$body$
+RAP 0 ; Call func23_$body$
+RTN ; func23 return
+
+LD 1 0 ; Var l1
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 144 92 ; Sel on predicate (null? l1 )
+RTN ; func23_$body$ return
+
+LDC 0 ; 
+JOIN ; func4 join
+
+DUM 0 ; func12 bindings
+LDF 87 ; Load func12_$body$
+RAP 0 ; Call func12_$body$
+RTN ; func12 return
+
+LD 1 1 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 146 54 ; Sel on predicate (null? l )
+RTN ; func12_$body$ return
+
+LD 1 0 ; Var l1
+CAR ; 
+LD 1 0 ; Var l1
+CDR ; 
+LD 1 1 ; Var l2
+LD 2 8 ; Var list-extend
+AP 2 ; Func call list-extend
+CONS ; 
+JOIN ; func22 join
+
+LDC 2 ; 
+JOIN ; func7 join
+
+LD 2 0 ; Var nil
+JOIN ; func13 join
+
+DUM 0 ; func24 bindings
+LDF 109 ; Load func24_$body$
+RAP 0 ; Call func24_$body$
+RTN ; func24 return
+
+LD 1 0 ; Var accum
+LD 1 1 ; Var next
+ADD ; 
+RTN ; func24_$body$ return
+
+DUM 0 ; func6 bindings
+LDF 117 ; Load func6_$body$
+RAP 0 ; Call func6_$body$
+RTN ; func6 return
+
+LD 1 0 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 81 65 ; Sel on predicate (null? l )
+RTN ; func6_$body$ return
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 1 ; Func call func
+SEL 168 177 ; Sel on predicate (func (car l ) )
+JOIN ; func14 join
+
+DUM 0 ; func9 bindings
+LDF 132 ; Load func9_$body$
+RAP 0 ; Call func9_$body$
+RTN ; func9 return
+
+LD 1 0 ; Var t
+CDR ; 
+ATOM ; 
+SEL 101 137 ; Sel on predicate (atom (cdr t ) )
+RTN ; func9_$body$ return
+
+LDC 1 ; 
+LD 1 0 ; Var t
+CDR ; 
+LD 2 4 ; Var tuple-size
+AP 1 ; Func call tuple-size
+ADD ; 
+JOIN ; func8 join
+
+LD 1 1 ; Var l2
+JOIN ; func21 join
+
+LD 2 0 ; Var nil
+JOIN ; func10 join
+
+DUM 0 ; func20 bindings
+LDF 152 ; Load func20_$body$
+RAP 0 ; Call func20_$body$
+RTN ; func20 return
+
+LD 1 2 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 192 157 ; Sel on predicate (null? l )
+RTN ; func20_$body$ return
+
+LD 1 0 ; Var func
+LD 1 1 ; Var accum
+LD 1 2 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 2 ; Func call func
+LD 1 2 ; Var l
+CDR ; 
+LD 2 7 ; Var fold-left
+AP 3 ; Func call fold-left
+JOIN ; func19 join
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 6 ; Var filter
+AP 2 ; Func call filter
+CONS ; 
+JOIN ; func15 join
+
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 6 ; Var filter
+AP 2 ; Func call filter
+JOIN ; func16 join
+
+DUM 0 ; func17 bindings
+LDF 187 ; Load func17_$body$
+RAP 0 ; Call func17_$body$
+RTN ; func17 return
+
+LD 1 1 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 103 122 ; Sel on predicate (null? l )
+RTN ; func17_$body$ return
+
+LD 1 1 ; Var accum
+JOIN ; func18 join
+

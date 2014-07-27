@@ -1,0 +1,8 @@
+;;;; -*- mode: scheme -*-
+;;;; Tests list utils. Should be built with list-util-test.build
+
+;; Should return 20
+(fold-left
+ (lambda (accum next)
+   (+ accum next))
+ 10 (list 1 2 3 4))

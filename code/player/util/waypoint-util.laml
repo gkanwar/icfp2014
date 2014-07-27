@@ -17,7 +17,7 @@
 (define extend-path
   (lambda (path dir)
     (make-path (get-dir-loc dir (get-path-loc path))
-               (cons dir path))))
+               (cons dir (get-path-dirs path)))))
 
 ;;; Flip the directions on each path
 (define flip-path-dirs
@@ -53,44 +53,59 @@
     ;; Returns best path out from target. BFS *to* your start and
     ;; use flip-path-dirs to get a path from start to end.
     (begin
-      ;; (define expand-path
-      ;;   (lambda (new-frontier next-path)
-      ;;     (begin
-      ;;       (dbug 100)
-      ;;       (brk)
-      ;;       (define prev-loc (get-path-loc next-path))
-      ;;       (define prev-dirs (get-path-dirs next-path))
-      ;;       (define valid-dirs
-      ;;         (filter
-      ;;          (lambda (dir)
-      ;;            (and (not (is-wall world-map (get-dir-loc dir prev-loc)))
-      ;;                 ;; null means no previous direction, so any dir is fine
-      ;;                 ;; Need to use sc-or here so that we don't try to evaluate
-      ;;                 ;; the car of a nil list.
-      ;;                 (sc-or (lambda (THUNK)
-      ;;                          (null? prev-dirs))
-      ;;                        (lambda (THUNK)
-      ;;                          ((not (opposing-dir? dir (car prev-dirs))))))))
-      ;;          all-dirs))
-      ;;       (map
-      ;;        (lambda (dir)
-      ;;          (begin
-      ;;            (extend-path next-path dir)
-      ;;            (brk)))
-      ;;        valid-dirs))))
-      ;; (define new-frontier nil)
-;;        (fold-left expand-path nil frontier))
-      ;; (if (has-loc? target new-frontier)
-      ;;     (get-path-with-loc target new-frontier)
-      ;;     (bfs-helper target new-frontier)))))
-      (make-path (make-loc 0 0) (list left)))))
+      (if (null? frontier)
+          (begin
+            ;; This should never happen!
+            (dbug 666)
+            ;; Cause Lambda Man to go right, thinking he's progressing towards
+            ;; the target...
+            (make-path target (list left)))
+          (begin
+            (define expand-path
+              (lambda (new-frontier next-path)
+                (begin
+                  (define prev-loc
+                    (begin
+                      (dbug 600)
+                      (dbug next-path)
+                      (get-path-loc next-path)))
+                  (define prev-dirs (get-path-dirs next-path))
+                  (define valid-dirs
+                    (begin
+                      (dbug 601)
+                      (dbug prev-dirs)
+                      (filter
+                       (lambda (dir)
+                         (and (not (is-wall world-map (get-dir-loc dir prev-loc)))
+                              ;; null means no previous direction, so any dir is fine
+                              ;; Need to use sc-or here so that we don't try to evaluate
+                              ;; the car of a nil list.
+                              (sc-or (lambda (THUNK)
+                                       (null? prev-dirs))
+                                     (lambda (THUNK)
+                                       (not (opposing-dir? dir (car prev-dirs)))))))
+                       all-dirs)))
+                  (list-extend
+                   (map
+                    (lambda (dir)
+                      (extend-path next-path dir))
+                    valid-dirs)
+                   new-frontier))))
+            (define new-frontier
+              (fold-left expand-path nil frontier))
+            (dbug target)
+            (dbug frontier)
+            (dbug new-frontier)
+            (if (has-loc? target new-frontier)
+                (get-path-with-loc target new-frontier)
+                (bfs-helper world-map target new-frontier)))))))
 
 (define bfs
   (lambda (world-map start end)
     (begin
       (define reverse-path
         (bfs-helper world-map start (list (make-path end nil))))
-     (flip-path-dirs reverse-path))))
+      (flip-path-dirs reverse-path))))
 
 ;;; Waypoint functions
 (define compute-waypoint-dir

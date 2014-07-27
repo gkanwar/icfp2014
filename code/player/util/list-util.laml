@@ -43,12 +43,18 @@
 
 (define fold-left
   (lambda (func accum l)
-    ;; func - (f accum next) -> new-accum
-    ;; accum - accumulator value
-    ;; l - list to fold
-    (if (null? l)
-        accum
-        (fold-left func (func accum (car l)) (cdr l)))))
+    (begin
+      (dbug 999)
+       ;; func - (f accum next) -> new-accum
+       ;; accum - accumulator value
+       ;; l - list to fold
+       (if (null? l)
+           (begin
+             (dbug 990)
+             accum)
+           (begin
+             (dbug 991)
+             (fold-left func (func accum (car l)) (cdr l)))))))
 
 ;; Return new list containing l1 then l2
 (define list-extend

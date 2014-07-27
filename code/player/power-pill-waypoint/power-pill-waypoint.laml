@@ -31,9 +31,10 @@
       (define world-map (get-world-map world))
       (define player-loc (get-player-loc (get-player-status world)))
       (define cur-waypoint (get-state-waypoint state))
-      ;; (define next-waypoint (next-power-pill world-map player-loc))
-      ;; (define next-dir (compute-waypoint-dir
-      ;;                   world-map player-loc next-waypoint))
+      (define next-waypoint (next-power-pill world-map player-loc))
+      (define next-dir (compute-waypoint-dir
+                        world-map player-loc next-waypoint))
+      (dbug next-dir)
       (cons (build-state next-dir next-waypoint) next-dir))))
 
 (define init
