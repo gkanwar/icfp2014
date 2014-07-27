@@ -45,12 +45,12 @@
   (lambda (world-map loc)
     (and (and (>= (get-loc-row loc) 0)
               (< (get-loc-row loc) (list-size world-map)))
-         (and (>= (get-loc-col) 0)
-              (< (get-loc-col) (list-size world-map))))))
+         (and (>= (get-loc-col loc) 0)
+              (< (get-loc-col loc) (list-size (car world-map)))))))
 
 (define is-wall
   (lambda (world-map loc)
-    (if (not (check-loc-in-bounds loc))
+    (if (not (check-loc-in-bounds world-map loc))
         ;; If out-of-bounds, consider it a wall
         true
         (= wall (get-map-val world-map loc)))))
@@ -92,7 +92,10 @@
 
 (define get-player-loc
   (lambda (player-status)
-    (list-ref player-status 1)))
+    (begin
+      (define coord-loc (list-ref player-status 1))
+      ;; Need to flip the (x,y) coord to (row,col)
+      (cons (cdr coord-loc) (car coord-loc)))))
 
 (define get-player-dir
   (lambda (player-status)
@@ -154,5 +157,5 @@
                   (cons row-index col-index))
                 ;; Translate the list of column indices into (row, col) pairs
                 (find-item-indices-in-row (car world-map) 0))
-               (find-item-indices world-map (+ row-index 1))))))
+               (find-item-indices (cdr world-map) (+ row-index 1))))))
       (find-item-indices world-map 0))))
