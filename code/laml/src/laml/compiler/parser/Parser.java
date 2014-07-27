@@ -214,8 +214,11 @@ public class Parser {
                         throw new RuntimeException(
                                 "lambda bindings must all be var type");
                     }
-                    argEnv.addBinding(bindingNode.op.token, new Binding(
-                            bindingNode.op.token, ParserDataType.INTEGER));
+                    // HACK: Allow declaring a thunk using (lambda (THUNK) def)
+                    if (bindingNode.op.token != "THUNK") {
+                        argEnv.addBinding(bindingNode.op.token, new Binding(
+                                bindingNode.op.token, ParserDataType.INTEGER));
+                    }
                     for (LexerNode bindingChild : bindingNode.children) {
                         if (bindingChild.type != NodeType.VARIABLE) {
                             throw new RuntimeException(
