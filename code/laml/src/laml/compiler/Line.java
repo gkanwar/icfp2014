@@ -56,8 +56,8 @@ public class Line {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (code.size() == 0) {
-            System.err.println("Warning: Cannot have a hanging comment "
-                    + "(must be attached to code). Replacing with empty line.");
+            // Cannot have a hanging comment (must be attached to code). Replace
+            // with empty line.
             return "";
         }
         for (Token t : code) {

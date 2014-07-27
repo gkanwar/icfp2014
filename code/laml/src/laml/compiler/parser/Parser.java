@@ -125,7 +125,7 @@ public class Parser {
                 }
                 CodeSequence definition = parseNode(
                         functionNode.children.get(1), newEnv, globalFuncMap);
-                String uniqueName = "asdf"; // TODO(gkanwar): Get unique name
+                String uniqueName = getUniqueName(globalFuncMap);
                 globalFuncMap.put(uniqueName, new ParserFunction(uniqueName,
                         newEnv, definition));
                 c.code.add(new Line(Arrays.asList(
@@ -139,6 +139,24 @@ public class Parser {
             }
         }
         return c;
+    }
+
+    /**
+     * Generate a function name which doesn't collide with any functions in
+     * globalFuncMap.
+     * 
+     * @param globalFuncMap Current global function map
+     */
+    private static String getUniqueName(
+            Map<String, ParserFunction> globalFuncMap) {
+        int i = 0;
+        while (true) {
+            String tryName = "func" + i;
+            if (!globalFuncMap.containsKey(tryName)) {
+                return tryName;
+            }
+            ++i;
+        }
     }
 
     /**
