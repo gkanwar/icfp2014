@@ -1,0 +1,3 @@
+(define thunk
+  (lambda (THUNK) 5))
+(thunk)

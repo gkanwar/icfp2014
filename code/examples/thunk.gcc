@@ -1,0 +1,18 @@
+DUM 1 ; main_$body$ bindings
+LDF 8 ; Define thunk
+LDF 5 ; Load main_$body$ body
+RAP 1 ; Call main_$body$ body
+RTN ; main return
+
+LD 0 0 ; Var thunk
+AP 0 ; Func call thunk
+RTN ; main_$body$ return
+
+DUM 0 ; func0_$body$ bindings
+LDF 12 ; Load func0_$body$ body
+RAP 0 ; Call func0_$body$ body
+RTN ; func0 return
+
+LDC 5 ; 
+RTN ; func0_$body$ return
+
