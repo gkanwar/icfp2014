@@ -130,8 +130,7 @@ public class LexedProgram {
             } else {
                 // FUNCTION
                 eatWhitespace(is);
-                String op = getToken(is);
-                checkValidToken(op);
+                LexerNode op = lexNode(is);
                 LexerNode node = new LexerNode(NodeType.FUNCTION, op);
                 while (!isStreamDone(is)) {
                     eatWhitespace(is);
@@ -158,7 +157,8 @@ public class LexedProgram {
      */
     public static LexedProgram lexProgram(InputStream progIn) {
         // All programs wrapped in a begin
-        LexerNode root = new LexerNode(NodeType.FUNCTION, "begin");
+        LexerNode root = new LexerNode(NodeType.FUNCTION, new LexerNode(
+                NodeType.VARIABLE, "begin"));
         LexedProgram prog = new LexedProgram(root);
 
         PushbackInputStream is = new PushbackInputStream(progIn);
