@@ -10,7 +10,7 @@ import laml.compiler.Line;
  * Parsed function definition. This will eventually turn into a LabelledFunction
  * which will be post-processed to resolve the labels to absolute addresses.
  */
-public class ParserFunction {
+public class ParserFunction implements ParserLabeledBlock {
     private String name;
     private EnvFrame env;
     private CodeSequence body;
@@ -21,6 +21,7 @@ public class ParserFunction {
         this.body = body;
     }
 
+    @Override
     public List<LabeledFunction> toLabeledFunctions() {
         List<LabeledFunction> out = new ArrayList<LabeledFunction>();
 

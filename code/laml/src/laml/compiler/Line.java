@@ -84,4 +84,19 @@ public class Line {
                 new Token(TokenType.OP, "RTN")),
                 comment);
     }
+
+    public static Line makeJoin(String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "JOIN")),
+                comment);
+    }
+
+    public static Line makeSel(
+            String trueBranchLabel, String falseBranchLabel, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "SEL"),
+                new Token(TokenType.LABEL, trueBranchLabel),
+                new Token(TokenType.LABEL, falseBranchLabel)),
+                comment);
+    }
 }

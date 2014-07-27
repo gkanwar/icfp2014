@@ -17,7 +17,7 @@ import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 public class Parser {
     private static CodeSequence parseNArgBuiltIn(String assemblyOp,
             int numArgs, LexerNode functionNode, EnvFrame env,
-            Map<String, ParserFunction> globalFuncMap) {
+            Map<String, ParserLabeledBlock> globalFuncMap) {
         if (functionNode.children.size() != numArgs) {
             throw new RuntimeException("+ takes " + numArgs + " arguments");
         }
@@ -42,7 +42,7 @@ public class Parser {
      *            be a unique generated name.
      */
     public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env,
-            Map<String, ParserFunction> globalFuncMap) {
+            Map<String, ParserLabeledBlock> globalFuncMap) {
         CodeSequence c = new CodeSequence();
         if (functionNode.type == NodeType.VARIABLE) {
             try {
@@ -130,7 +130,32 @@ public class Parser {
                                 globalFuncMap);
                         c.code.addAll(childCode.code);
                     }
-                } else if (op.token.equals("define")) {
+                }
+                else if (op.token.equals("if")) {
+                    if (functionNode.children.size() != 3) {
+                        throw new RuntimeException(
+                                "if takes three arguments: the prediction, true branch, and false branch");
+                    }
+                    CodeSequence predicate = parseNode(
+                            functionNode.children.get(0), env, globalFuncMap);
+                    c.code.addAll(predicate.code);
+                    String trueBranchLabel = getUniqueName(globalFuncMap);
+                    ParserBranch trueBranch = new ParserBranch(trueBranchLabel,
+                            parseNode(functionNode.children.get(1), env,
+                                    globalFuncMap));
+                    globalFuncMap.put(trueBranchLabel, trueBranch);
+                    String falseBranchLabel = getUniqueName(globalFuncMap);
+                    ParserBranch falseBranch = new ParserBranch(
+                            falseBranchLabel,
+                            parseNode(functionNode.children.get(2), env,
+                                    globalFuncMap));
+                    globalFuncMap.put(falseBranchLabel, falseBranch);
+                    c.code.add(Line.makeSel(
+                            trueBranchLabel, falseBranchLabel,
+                            "Sel on predicate "
+                                    + functionNode.children.get(0).toString()));
+                }
+                else if (op.token.equals("define")) {
                     if (functionNode.children.size() != 2) {
                         throw new RuntimeException(
                                 "define takes two arguments: the binding and definition");
@@ -203,8 +228,7 @@ public class Parser {
                             globalFuncMap);
                     String uniqueName = getUniqueName(globalFuncMap);
                     globalFuncMap.put(uniqueName, new ParserFunction(
-                            uniqueName,
-                            funcEnv, definition));
+                            uniqueName, funcEnv, definition));
                     c.code.add(new Line(Arrays.asList(
                             new Token(TokenType.OP, "LDF"),
                             new Token(TokenType.LABEL, uniqueName)),
@@ -255,7 +279,7 @@ public class Parser {
      * @param globalFuncMap Current global function map
      */
     private static String getUniqueName(
-            Map<String, ParserFunction> globalFuncMap) {
+            Map<String, ParserLabeledBlock> globalFuncMap) {
         int i = 0;
         while (true) {
             String tryName = "func" + i;
@@ -272,12 +296,12 @@ public class Parser {
     public static RelativeProgram parseProgram(LexedProgram lexProg) {
         RelativeProgram prog = new RelativeProgram();
         EnvFrame rootEnv = new EnvFrame();
-        Map<String, ParserFunction> globalFuncMap = new HashMap<String, ParserFunction>();
+        Map<String, ParserLabeledBlock> globalFuncMap = new HashMap<String, ParserLabeledBlock>();
         CodeSequence mainCode = parseNode(lexProg.rootNode, rootEnv,
                 globalFuncMap);
         ParserFunction mainFunc = new ParserFunction("main", rootEnv, mainCode);
         prog.addLabeledFunctions(mainFunc.toLabeledFunctions());
-        for (ParserFunction func : globalFuncMap.values()) {
+        for (ParserLabeledBlock func : globalFuncMap.values()) {
             prog.addLabeledFunctions(func.toLabeledFunctions());
         }
         return prog;
