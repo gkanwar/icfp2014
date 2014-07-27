@@ -1,3 +1,4 @@
+;;;; -*- mode: scheme -*-
 (define wall 0)
 (define empty 1)
 (define pill 2)

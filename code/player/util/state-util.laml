@@ -1,0 +1,12 @@
+;;;; -*- mode: scheme -*-
+;;;; Defines a standard "state" object format.
+
+;; Extend this with additional state bits, adding accessors
+;; below as you go.
+(define build-state
+  (lambda (dir)
+    (list dir)))
+
+(define get-state-dir
+  (lambda (state)
+    (car state)))
