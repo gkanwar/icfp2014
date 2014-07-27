@@ -1,11 +1,19 @@
+;; Empty list
+(define nil 0)
+(define null?
+  (lambda (l)
+    (and
+     (atom l)
+     (= nil l))))
+
 (define list-ref
   (lambda (l index)
     (if (= index 0)
         (car l)
-        (list-ref l (- index 1)))))
+        (list-ref (cdr l) (- index 1)))))
 
 (define list-size
   (lambda (l)
-    (if (= 0 l)
+    (if (null? l)
         0
         (+ 1 (list-size (cdr l))))))

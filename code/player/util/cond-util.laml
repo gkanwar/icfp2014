@@ -19,6 +19,7 @@
         0
         1)))
 
+;; Short-circuit OR
 (define or
   (lambda (cond1 cond2)
     (if cond1
@@ -27,6 +28,7 @@
             1
             0))))
 
+;; Short-circuit AND
 (define and
   (lambda (cond1 cond2)
     (if (not cond1)

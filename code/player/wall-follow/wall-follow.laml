@@ -11,6 +11,6 @@
 
 (define init
   (lambda (THUNK)
-    (cons up step)))
+    (cons right step)))
 
 (init)

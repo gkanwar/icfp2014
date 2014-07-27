@@ -15,6 +15,7 @@
 (define down 2)
 (define left 3)
 
+;; Doesn't bound check, that should be done externally
 (define get-map-val
   (lambda (world-map row col)
     (list-ref (list-ref world-map row) col)))
@@ -22,7 +23,7 @@
 (define check-row-in-bounds
   (lambda (world-map row)
     (if (< 0 row)
-        true
+        false
         (if (>= row (list-size world-map))
             false
             true))))
@@ -46,13 +47,13 @@
 (define get-dir-coords
   (lambda (dir row-start col-start)
     (if (= dir up)
-        (list (- row-start 1) col-start)
+        (cons (- row-start 1) col-start)
         (if (= dir right)
-            (list row-start (+ col-start 1))
+            (cons row-start (+ col-start 1))
             (if (= dir down)
-                (list (+ row-start 1) col-start)
+                (cons (+ row-start 1) col-start)
                 (if (= dir left)
-                    (list row-start (- col-start 1))
+                    (cons row-start (- col-start 1))
                     false))))))
 
 (define get-world-map
