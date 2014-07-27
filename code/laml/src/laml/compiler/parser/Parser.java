@@ -15,19 +15,16 @@ import laml.compiler.parser.EnvFrame.Binding;
 import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 
 public class Parser {
-    private static CodeSequence parseTwoArgBuiltIn(String assemblyOp,
-            LexerNode functionNode, EnvFrame env,
+    private static CodeSequence parseNArgBuiltIn(String assemblyOp,
+            int numArgs, LexerNode functionNode, EnvFrame env,
             Map<String, ParserFunction> globalFuncMap) {
-        if (functionNode.children.size() != 2) {
-            throw new RuntimeException("+ takes two arguments");
+        if (functionNode.children.size() != numArgs) {
+            throw new RuntimeException("+ takes " + numArgs + " arguments");
         }
         CodeSequence out = new CodeSequence();
-        CodeSequence buildArg1 = parseNode(
-                functionNode.children.get(0), env, globalFuncMap);
-        CodeSequence buildArg2 = parseNode(
-                functionNode.children.get(1), env, globalFuncMap);
-        out.code.addAll(buildArg1.code);
-        out.code.addAll(buildArg2.code);
+        for (LexerNode child : functionNode.children) {
+            out.code.addAll(parseNode(child, env, globalFuncMap).code);
+        }
         out.code.add(new Line(Arrays
                 .asList(new Token(TokenType.OP, assemblyOp)), ""));
         return out;
@@ -73,32 +70,59 @@ public class Parser {
             if (op.type == NodeType.VARIABLE) {
                 // TODO(gkanwar): Built-ins are a hack right now.
                 if (op.token.equals("+")) {
-                    c.code.addAll(parseTwoArgBuiltIn("ADD", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "ADD", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals("-")) {
-                    c.code.addAll(parseTwoArgBuiltIn("SUB", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "SUB", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals("*")) {
-                    c.code.addAll(parseTwoArgBuiltIn("MUL", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "MUL", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals("/")) {
-                    c.code.addAll(parseTwoArgBuiltIn("DIV", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "DIV", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals("=")) {
-                    c.code.addAll(parseTwoArgBuiltIn("CEQ", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CEQ", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals(">")) {
-                    c.code.addAll(parseTwoArgBuiltIn("CGT", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CGT", 2,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals(">=")) {
-                    c.code.addAll(parseTwoArgBuiltIn("CGTE", functionNode, env,
-                            globalFuncMap).code);
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CGTE", 2,
+                            functionNode, env, globalFuncMap).code);
+                }
+                else if (op.token.equals("cons")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CONS", 2,
+                            functionNode, env, globalFuncMap).code);
+                }
+                else if (op.token.equals("atom")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "ATOM", 1,
+                            functionNode, env, globalFuncMap).code);
+                }
+                else if (op.token.equals("car")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CAR", 1,
+                            functionNode, env, globalFuncMap).code);
+                }
+                else if (op.token.equals("cdr")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "CDR", 1,
+                            functionNode, env, globalFuncMap).code);
                 }
                 else if (op.token.equals("begin")) {
                     for (LexerNode child : functionNode.children) {
