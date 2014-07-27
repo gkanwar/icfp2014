@@ -1,0 +1,66 @@
+DUM 2 ; main_$body$ bindings
+LDF 26 ; Define fib
+LDF 14 ; Define fib-diff
+LDF 6 ; Load main_$body$ body
+RAP 2 ; Call main_$body$ body
+RTN ; main return
+
+LDC 10 ; 
+LD 0 0 ; Var fib
+AP 1 ; Func call fib
+LDC 10 ; 
+LDC 5 ; 
+LD 0 1 ; Var fib-diff
+AP 2 ; Func call fib-diff
+RTN ; main_$body$ return
+
+DUM 0 ; func5_$body$ bindings
+LDF 18 ; Load func5_$body$ body
+RAP 0 ; Call func5_$body$ body
+RTN ; func5 return
+
+LD 1 0 ; Var n1
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+LD 1 1 ; Var n2
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+SUB ; 
+RTN ; func5_$body$ return
+
+DUM 0 ; func4_$body$ bindings
+LDF 30 ; Load func4_$body$ body
+RAP 0 ; Call func4_$body$ body
+RTN ; func4 return
+
+LD 1 0 ; Var n
+LDC 0 ; 
+CEQ ; 
+SEL 35 37 ; Sel on predicate (= n 0 )
+RTN ; func4_$body$ return
+
+LDC 1 ; 
+JOIN ; func0 join
+
+LD 1 0 ; Var n
+LDC 1 ; 
+CEQ ; 
+SEL 42 44 ; Sel on predicate (= n 1 )
+JOIN ; func1 join
+
+LDC 1 ; 
+JOIN ; func2 join
+
+LD 1 0 ; Var n
+LDC 1 ; 
+SUB ; 
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+LD 1 0 ; Var n
+LDC 2 ; 
+SUB ; 
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+ADD ; 
+JOIN ; func3 join
+

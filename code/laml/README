@@ -1,0 +1,8 @@
+To compile a LaML program, use the helper compile.sh, which outputs on stdout:
+./compile.sh file1.laml file2.laml > out.gcc
+
+Currently importing laml files from within one another is not supported.
+Instead, you must pass in the laml files in order of dependencies (i.e. if
+file1.laml is needed for file2.laml, then file1.laml should be passed first).
+The code is basically just concatenated together and compiled as one large
+chunk of code.

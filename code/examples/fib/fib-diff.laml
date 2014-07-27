@@ -1,0 +1,4 @@
+(define fib-diff
+  (lambda (n1 n2)
+    (- (fib n1) (fib n2))))
+(fib-diff 10 5)
