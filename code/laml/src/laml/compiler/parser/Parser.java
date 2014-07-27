@@ -30,6 +30,11 @@ public class Parser {
         return out;
     }
 
+    public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env,
+            Map<String, ParserLabeledBlock> globalFuncMap) {
+        return parseNode(functionNode, env, globalFuncMap, false);
+    }
+
     /**
      * Parse a node to produce compiled code.
      * 
@@ -40,9 +45,13 @@ public class Parser {
      * @param globalFuncMap map of global function names to parser functions.
      *            These names are only used for label generation, so they should
      *            be a unique generated name.
+     * @param headerCode whether or not this code will go in the header. If the
+     *            code is going in the header, then it must not reference
+     *            anything in the innermost env. Instead, it should copy those
+     *            definitions in directly.
      */
     public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env,
-            Map<String, ParserLabeledBlock> globalFuncMap) {
+            Map<String, ParserLabeledBlock> globalFuncMap, boolean headerCode) {
         CodeSequence c = new CodeSequence();
         if (functionNode.type == NodeType.VARIABLE) {
             try {
@@ -57,13 +66,17 @@ public class Parser {
                 // findBindingDepth / findBindingIndex will complain if cannot
                 // be resolved.
                 String symbol = functionNode.token;
-                c.code.add(new Line(Arrays.asList(
-                        new Token(TokenType.OP, "LD"),
-                        new Token(TokenType.CONST, env
-                                .findBindingDepth(symbol)),
-                        new Token(TokenType.CONST, env
-                                .findBindingIndex(symbol))),
-                        "Var " + symbol));
+                int depth = env.findBindingDepth(symbol);
+                // Special case: Cannot reference innermost environment from
+                // header code, since the header code is defining that
+                // environment using a dummy env and RAP. Instead, copy
+                // definition.
+                if (headerCode && depth == 0) {
+                    c.code.addAll(env.bindingMap.get(symbol).definition.code);
+                } else {
+                    c.code.add(Line.makeLd(depth, env.findBindingIndex(symbol),
+                            "Var " + symbol));
+                }
             }
         } else { // FUNCTION
             LexerNode op = functionNode.op;
@@ -178,19 +191,22 @@ public class Parser {
                         // (define x (lambda (x) (+ x 1))).
                         throw new RuntimeException(
                                 "define doesn't support argument-style binding shortcuts yet");
-                    } // TODO(gkanwar): Add typing, this just assumes everything
-                      // is an int for now, and never bothers to check
+                    }
+                    // TODO(gkanwar): Add typing, this just assumes everything
+                    // is an int for now, and never bothers to check
                     Binding envBinding = new Binding(binding.token,
                             Binding.ParserDataType.INTEGER);
                     env.addBinding(binding.token, envBinding);
+                    // Use header parse mode, so variable resolutions in
+                    // innermost env are replaced by data copy.
                     CodeSequence definition = parseNode(
-                            functionNode.children.get(1), env, globalFuncMap);
+                            functionNode.children.get(1), env,
+                            globalFuncMap, true);
                     envBinding.setDefinition(definition);
                     // NOTE(gkanwar): No code added directly here. All
-                    // definitions
-                    // will be lifted to the beginning of the function call,
-                    // where
-                    // a new environment scope is created and defined.
+                    // definitions will be lifted to the beginning of the
+                    // function call, where a new environment scope is created
+                    // and defined.
 
                 }
                 else if (op.token.equals("lambda")) {

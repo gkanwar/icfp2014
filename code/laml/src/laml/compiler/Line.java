@@ -107,6 +107,14 @@ public class Line {
                 comment);
     }
 
+    public static Line makeLd(int depth, int index, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "LD"),
+                new Token(TokenType.CONST, depth),
+                new Token(TokenType.CONST, index)),
+                comment);
+    }
+
     public static Line makeLdf(String label, String comment) {
         return new Line(Arrays.asList(
                 new Token(TokenType.OP, "LDF"),

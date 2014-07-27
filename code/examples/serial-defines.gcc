@@ -1,0 +1,10 @@
+DUM 2 ; main_$body$ bindings
+LDC 1 ; Define b
+LDC 1 ; Define b
+LDF 6 ; Load main_$body$ body
+RAP 2 ; Call main_$body$ body
+RTN ; main return
+
+LD 0 1 ; Var b
+RTN ; main_$body$ return
+
