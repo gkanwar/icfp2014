@@ -1,0 +1,43 @@
+;;;; -*- mode: scheme -*-
+
+;; Extend this with additional state bits, adding accessors
+;; below as you go.
+(define build-state
+  (lambda (dir waypoint)
+    ;; dir - direction enum
+    ;; waypoint - (row, col) tuple giving immediate desired location
+    (list dir waypoint)))
+(define get-state-dir
+  (lambda (state)
+    (car state)))
+(define get-state-waypoint
+  (lambda (state)
+    (list-ref state 1)))
+
+(define next-power-pill
+  (lambda (world-map player-loc)
+    (begin
+      (define power-pills (find-item-locs world-map power-pill))
+      (if (null? power-pills)
+          ;; Just stay at current loc
+          player-loc
+          ;; Otherwise just pick the first
+          (car power-pills)))))
+
+;;;; Simple waypoint-based AI. Goes to each power pill in succession.
+(define step
+  (lambda (state world)
+    (begin
+      (define world-map (get-world-map world))
+      (define player-loc (get-player-loc (get-player-status world)))
+      (define cur-waypoint (get-state-waypoint state))
+      ;; (define next-waypoint (next-power-pill world-map player-loc))
+      ;; (define next-dir (compute-waypoint-dir
+      ;;                   world-map player-loc next-waypoint))
+      (cons (build-state next-dir next-waypoint) next-dir))))
+
+(define init
+  (lambda (THUNK)
+    (cons (build-state up nil) step)))
+
+(init)

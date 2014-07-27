@@ -1,0 +1,92 @@
+;;;; -*- mode: scheme -*-
+;;;; Utilities for getting directions to waypoints using BFS to find the
+;;;; shortest route. Since paths are reverse-order, BFS from the target TO
+;;;; your location, then flip directions.
+
+;;; Path is defined as (current loc, directions). Direction is a reverse list.
+;;; Paths are forbidden from reversing direction.
+(define make-path
+  (lambda (loc dirs)
+    (cons loc dirs)))
+(define get-path-loc
+  (lambda (path)
+    (car path)))
+(define get-path-dirs
+  (lambda (path)
+    (cdr path)))
+(define extend-path
+  (lambda (path dir)
+    (make-path (get-dir-loc dir (get-path-loc path))
+               (cons dir path))))
+
+;;; Flip the directions on each path
+(define flip-path-dirs
+  (lambda (path)
+    (map get-opposing-dir path)))
+
+;; Frontier is a list of paths
+(define has-loc?
+  (lambda (loc frontier)
+    (if (null? frontier)
+        false
+        (if (loc=? (get-path-loc (car frontier))
+                   loc)
+            true
+            (has-loc? loc (cdr frontier))))))
+
+;; Guard this call with (has-loc?)
+(define get-path-with-loc
+  (lambda (loc frontier)
+    (if (null? frontier)
+        nil
+        (if (loc=? (get-path-loc (car frontier))
+                   loc)
+            (car frontier)
+            (get-path-with-loc loc (cdr frontier))))))
+
+(define bfs-helper
+  (lambda (world-map target frontier)
+    ;; target - current target (row, col) pair
+    ;; frontier - list of paths
+    ;; Returns best path out from target. BFS *to* your start and
+    ;; use flip-path-dirs to get a path from start to end.
+    (begin
+      (define expand-path
+        (lambda (new-frontier next-path)
+          (begin
+            (define prev-loc (get-path-loc next-path))
+            (define prev-dirs (get-path-dirs next-path))
+            (define valid-dirs
+              (filter
+               (lambda (dir)
+                 (and (not (is-wall world-map (get-dir-loc dir prev-loc)))
+                      ;; null means no previous direction, so any dir is fine
+                      ;; Need to use sc-or here so that we don't try to evaluate
+                      ;; the car of a nil list.
+                      (sc-or (lambda (THUNK)
+                               (null? prev-dirs))
+                             (lambda (THUNK)
+                               ((not (opposing-dir? dir (car prev-dirs))))))))
+               all-dirs))
+            (map
+             (lambda (dir)
+               (extend-path next-path dir)) valid-dirs))))
+      (define new-frontier
+        (fold-left expand-path nil frontier))
+      (if (has-loc? target new-frontier)
+          (get-path-with-loc target new-frontier)
+          (bfs-helper target new-frontier)))))
+
+(define bfs
+  (lambda (world-map start end)
+    (begin
+      (define reverse-path
+        (bfs-helper world-map start (list (make-path end nil))))
+      (flip-path-dirs reverse-path))))
+
+;;; Waypoint functions
+(define waypoint-reached loc=?)
+
+(define compute-waypoint-dir
+  (lambda (world-map loc waypoint)
+    (car (get-path-dirs (bfs loc waypoint)))))
