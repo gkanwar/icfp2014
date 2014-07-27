@@ -1,0 +1,11 @@
+(define list-ref
+  (lambda (l index)
+    (if (= index 0)
+        (car l)
+        (list-ref l (- index 1)))))
+
+(define list-size
+  (lambda (l)
+    (if (= 0 l)
+        0
+        (+ 1 (list-size (cdr l))))))

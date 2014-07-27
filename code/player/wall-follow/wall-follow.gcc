@@ -1,0 +1,192 @@
+DUM 9 ; main_$body$ bindings
+LDF 20 ; Define <
+LDF 40 ; Define <=
+LDF 112 ; Define list-ref
+LDF 31 ; Define list-size
+LDF 61 ; Define get-map-val
+LDF 144 ; Define check-row-in-bounds
+LDF 73 ; Define check-col-in-bounds
+LDF 49 ; Define step
+LDF 92 ; Define init
+LDF 13 ; Load main_$body$ body
+RAP 9 ; Call main_$body$ body
+RTN ; main return
+
+LD 0 8 ; Var init
+AP 0 ; Func call init
+RTN ; main_$body$ return
+
+LDC 0 ; 
+JOIN ; func0 join
+
+LDC 1 ; 
+JOIN ; func1 join
+
+DUM 0 ; func2_$body$ bindings
+LDF 24 ; Load func2_$body$ body
+RAP 0 ; Call func2_$body$ body
+RTN ; func2 return
+
+LD 1 0 ; Var num1
+LD 1 1 ; Var num2
+CGTE ; 
+SEL 16 18 ; Sel on predicate (>= num1 num2 )
+RTN ; func2_$body$ return
+
+LDC 0 ; 
+JOIN ; func3 join
+
+DUM 0 ; func11_$body$ bindings
+LDF 35 ; Load func11_$body$ body
+RAP 0 ; Call func11_$body$ body
+RTN ; func11 return
+
+LDC 0 ; 
+LD 1 0 ; Var l
+CEQ ; 
+SEL 110 123 ; Sel on predicate (= 0 l )
+RTN ; func11_$body$ return
+
+DUM 0 ; func5_$body$ bindings
+LDF 44 ; Load func5_$body$ body
+RAP 0 ; Call func5_$body$ body
+RTN ; func5 return
+
+LD 1 0 ; Var num1
+LD 1 1 ; Var num2
+CGT ; 
+SEL 29 59 ; Sel on predicate (> num1 num2 )
+RTN ; func5_$body$ return
+
+DUM 0 ; func23_$body$ bindings
+LDF 53 ; Load func23_$body$ body
+RAP 0 ; Call func23_$body$ body
+RTN ; func23 return
+
+LD 1 0 ; Var state
+LDC 1 ; 
+ADD ; 
+LDC 1 ; 
+CONS ; 
+RTN ; func23_$body$ return
+
+LDC 1 ; 
+JOIN ; func4 join
+
+DUM 0 ; func12_$body$ bindings
+LDF 65 ; Load func12_$body$ body
+RAP 0 ; Call func12_$body$ body
+RTN ; func12 return
+
+LD 1 0 ; Var world-map
+LD 1 1 ; Var row
+LD 2 2 ; Var list-ref
+AP 2 ; Func call list-ref
+LD 1 2 ; Var col
+LD 2 2 ; Var list-ref
+AP 2 ; Func call list-ref
+RTN ; func12_$body$ return
+
+DUM 0 ; func22_$body$ bindings
+LDF 77 ; Load func22_$body$ body
+RAP 0 ; Call func22_$body$ body
+RTN ; func22 return
+
+LDC 0 ; 
+LD 1 1 ; Var col
+LD 2 0 ; Var <
+AP 2 ; Func call <
+SEL 154 132 ; Sel on predicate (< 0 col )
+RTN ; func22_$body$ return
+
+LD 1 0 ; Var l
+LD 1 1 ; Var index
+LDC 1 ; 
+SUB ; 
+LD 2 2 ; Var list-ref
+AP 2 ; Func call list-ref
+JOIN ; func7 join
+
+LDC 0 ; 
+JOIN ; func13 join
+
+DUM 0 ; func24_$body$ bindings
+LDF 96 ; Load func24_$body$ body
+RAP 0 ; Call func24_$body$ body
+RTN ; func24 return
+
+LDC 0 ; 
+LD 2 7 ; Var step
+CONS ; 
+RTN ; func24_$body$ return
+
+LD 1 0 ; Var l
+CAR ; 
+JOIN ; func6 join
+
+LD 1 1 ; Var row
+LD 1 0 ; Var world-map
+LD 2 3 ; Var list-size
+AP 1 ; Func call list-size
+CGTE ; 
+SEL 140 142 ; Sel on predicate (>= row (list-size world-map ) )
+JOIN ; func14 join
+
+LDC 0 ; 
+JOIN ; func9 join
+
+DUM 0 ; func8_$body$ bindings
+LDF 116 ; Load func8_$body$ body
+RAP 0 ; Call func8_$body$ body
+RTN ; func8 return
+
+LD 1 1 ; Var index
+LDC 0 ; 
+CEQ ; 
+SEL 100 83 ; Sel on predicate (= index 0 )
+RTN ; func8_$body$ return
+
+LDC 1 ; 
+JOIN ; func21 join
+
+LDC 1 ; 
+LD 1 0 ; Var l
+CDR ; 
+LD 2 3 ; Var list-size
+AP 1 ; Func call list-size
+ADD ; 
+JOIN ; func10 join
+
+LDC 0 ; 
+JOIN ; func20 join
+
+LD 1 1 ; Var col
+LD 1 0 ; Var world-map
+CAR ; 
+LD 2 3 ; Var list-size
+AP 1 ; Func call list-size
+CGTE ; 
+SEL 130 121 ; Sel on predicate (>= col (list-size (car world-map ) ) )
+JOIN ; func19 join
+
+LDC 0 ; 
+JOIN ; func15 join
+
+LDC 1 ; 
+JOIN ; func16 join
+
+DUM 0 ; func17_$body$ bindings
+LDF 148 ; Load func17_$body$ body
+RAP 0 ; Call func17_$body$ body
+RTN ; func17 return
+
+LDC 0 ; 
+LD 1 1 ; Var row
+LD 2 0 ; Var <
+AP 2 ; Func call <
+SEL 90 103 ; Sel on predicate (< 0 row )
+RTN ; func17_$body$ return
+
+LDC 0 ; 
+JOIN ; func18 join
+
