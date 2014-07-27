@@ -21,13 +21,60 @@ public class LexedProgram {
     }
 
     /**
+     * Subclass of pushback input stream to track line numbers.
+     */
+    public static class LexerInputStream extends PushbackInputStream {
+        int lineNum;
+
+        public LexerInputStream(InputStream is) {
+            super(is);
+            lineNum = 1;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int out = super.read();
+            if ((char) out == '\n') {
+                lineNum += 1;
+            }
+            return out;
+        }
+
+        @Override
+        public void unread(int b) throws IOException {
+            super.unread(b);
+            if ((char) b == '\n') {
+                lineNum -= 1;
+            }
+        }
+
+        public int getLineNum() {
+            return lineNum;
+        }
+    }
+
+    /**
+     * Custom exception class to augment reason with line number.
+     */
+    public static class LexerException extends RuntimeException {
+        public LexerException(String cause, LexerInputStream is) {
+            super("\nLine " +
+                    (is == null ? "Unknown" : is.getLineNum()) +
+                    ": " + cause);
+        }
+
+        // NOTE(gkanwar): Auto-generated
+        private static final long serialVersionUID = 4191797007213323463L;
+    }
+
+    /**
      * Read characters from the input until non-whitespace and non-comment. The
      * non-whitespace character is pushed back on the stream, so only whitespace
      * and comment characters are removed.
      * 
      * Comments are started by a ';' character, and ended by a '\n' character.
      */
-    public static void eatWhitespaceAndComments(PushbackInputStream is) {
+    public static void eatWhitespaceAndComments(LexerInputStream is) {
         try {
             boolean commentMode = false;
             while (true) {
@@ -57,7 +104,7 @@ public class LexedProgram {
      * Check whether the stream is done by reading in a character and checking
      * for the special -1 value.
      */
-    public static boolean isStreamDone(PushbackInputStream is) {
+    public static boolean isStreamDone(LexerInputStream is) {
         try {
             int next;
             next = is.read();
@@ -75,7 +122,7 @@ public class LexedProgram {
      * Try to read a ')' off the input stream. Returns whether or not ')' was
      * found, and pushes the character back if it is not ')'.
      */
-    public static boolean tryEatNodeEnd(PushbackInputStream is) {
+    public static boolean tryEatNodeEnd(LexerInputStream is) {
         try {
             char next = (char) is.read();
             if (next != ')') {
@@ -92,19 +139,19 @@ public class LexedProgram {
     /**
      * Ensure that a token is valid. Cannot be empty or contain parentheses.
      */
-    public static void checkValidToken(String token) {
+    public static void checkValidToken(String token, LexerInputStream is) {
         if (token.length() == 0) {
-            throw new RuntimeException("Invalid token of length 0");
+            throw new LexerException("Invalid token of length 0", is);
         }
         if (token.contains("(")) {
-            throw new RuntimeException("Token may not contain '(': " + token);
+            throw new LexerException("Token may not contain '(': " + token, is);
         }
         if (token.contains(")")) {
-            throw new RuntimeException("Token may not contain ')': " + token);
+            throw new LexerException("Token may not contain ')': " + token, is);
         }
         if (token.matches(".*\\s+.*")) {
-            throw new RuntimeException("Token may not contain whitespace: "
-                    + token);
+            throw new LexerException("Token may not contain whitespace: "
+                    + token, is);
         }
     }
 
@@ -112,7 +159,7 @@ public class LexedProgram {
      * Read in a token from input stream. Token ends on whitespace or ')'
      * character.
      */
-    public static String getToken(PushbackInputStream is) {
+    public static String getToken(LexerInputStream is) {
         StringBuilder sb = new StringBuilder();
         try {
             while (!isStreamDone(is)) {
@@ -135,28 +182,30 @@ public class LexedProgram {
      * Lex a node from the input. A node is a function call of the form:
      * (op[arg]*). Input must contain a node.
      */
-    public static LexerNode lexNode(PushbackInputStream is) {
+    public static LexerNode lexNode(LexerInputStream is) {
         try {
+            int lineNum = is.getLineNum();
             char next = (char) is.read();
             if (next != '(') {
                 // VARIABLE
                 is.unread(next);
                 String var = getToken(is);
-                checkValidToken(var);
-                return new LexerNode(NodeType.VARIABLE, var);
+                checkValidToken(var, is);
+                return new LexerNode(NodeType.VARIABLE, var, lineNum);
             } else {
                 // FUNCTION
                 eatWhitespaceAndComments(is);
                 LexerNode op = lexNode(is);
-                LexerNode node = new LexerNode(NodeType.FUNCTION, op);
+                LexerNode node = new LexerNode(NodeType.FUNCTION, op, lineNum);
                 while (!isStreamDone(is)) {
                     eatWhitespaceAndComments(is);
                     if (tryEatNodeEnd(is)) {
                         break;
                     }
                     if (isStreamDone(is)) {
-                        throw new RuntimeException(
-                                "Unexpected node end without closing paren.");
+                        throw new LexerException(
+                                "Unexpected node end without closing paren.",
+                                is);
                     }
                     LexerNode child = lexNode(is);
                     node.children.add(child);
@@ -164,8 +213,8 @@ public class LexedProgram {
                 return node;
             }
         } catch (IOException e) {
-            throw new RuntimeException(
-                    "Expected a node, but got an IOException");
+            throw new LexerException(
+                    "Expected a node, but got an IOException", is);
         }
     }
 
@@ -175,10 +224,10 @@ public class LexedProgram {
     public static LexedProgram lexProgram(InputStream progIn) {
         // All programs wrapped in a begin
         LexerNode root = new LexerNode(NodeType.FUNCTION, new LexerNode(
-                NodeType.VARIABLE, "begin"));
+                NodeType.VARIABLE, "begin", 0), 0);
         LexedProgram prog = new LexedProgram(root);
 
-        PushbackInputStream is = new PushbackInputStream(progIn);
+        LexerInputStream is = new LexerInputStream(progIn);
         while (!isStreamDone(is)) {
             eatWhitespaceAndComments(is);
             if (isStreamDone(is)) {

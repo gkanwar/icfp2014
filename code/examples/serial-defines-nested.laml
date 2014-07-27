@@ -1,0 +1,13 @@
+;;;; -*- mode: scheme -*-
+;;;; Tests nested a serial define inside an inner define block.
+
+(define plus-one
+  (lambda (x) (+ x 1)))
+(define func
+  (lambda (a b)
+    (begin
+      (define inc (plus-one a))
+      ;; Should return (a + 1) * b
+      (* inc b))))
+;; Expected: 55
+(func 10 5)

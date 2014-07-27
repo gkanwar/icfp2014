@@ -58,6 +58,18 @@ public class EnvFrame {
         }
     }
 
+    /**
+     * Exception class specifying that a lookup wasn't possible, with a reason.
+     */
+    public class EnvException extends Exception {
+        public EnvException(String reason) {
+            super(reason);
+        }
+
+        // NOTE(gkanwar): Auto-generated
+        private static final long serialVersionUID = -8343829440805755485L;
+    }
+
     // The map and list must both contain all bindings.
     // Binding index must match index in the bindings list.
     public Map<String, Binding> bindingMap;
@@ -92,14 +104,14 @@ public class EnvFrame {
      * first number on a LD. TODO(gkanwar): Determine the final resolved
      * variable order.
      */
-    public int findBindingDepth(String name) {
+    public int findBindingDepth(String name) throws EnvException {
         if (bindingMap.containsKey(name)) {
             return 0;
         } else if (parent != null) {
             return parent.findBindingDepth(name) + 1;
         } else {
-            throw new RuntimeException("Cannot find binding depth for symbol "
-                    + name);
+            throw new EnvException(
+                    "Cannot find binding depth for symbol " + name);
         }
     }
 
@@ -107,14 +119,14 @@ public class EnvFrame {
      * Finds the variable index of the symbol in the nearest enclosing
      * environment.
      */
-    public int findBindingIndex(String name) {
+    public int findBindingIndex(String name) throws EnvException {
         if (bindingMap.containsKey(name)) {
             return bindingMap.get(name).index;
         } else if (parent != null) {
             return parent.findBindingIndex(name);
         } else {
-            throw new RuntimeException("Cannot find binding index for symbol "
-                    + name);
+            throw new EnvException(
+                    "Cannot find binding index for symbol " + name);
         }
     }
 

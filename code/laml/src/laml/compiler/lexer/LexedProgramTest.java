@@ -12,39 +12,39 @@ public class LexedProgramTest {
         String valid1 = "asdf";
         String valid2 = "asdf_asdf_adsf";
         String valid3 = "test12345678!@#$%^&*";
-        LexedProgram.checkValidToken(valid1);
-        LexedProgram.checkValidToken(valid2);
-        LexedProgram.checkValidToken(valid3);
+        LexedProgram.checkValidToken(valid1, null);
+        LexedProgram.checkValidToken(valid2, null);
+        LexedProgram.checkValidToken(valid3, null);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCheckValidTokenInvalidToken1() {
         String invalid1 = "";
-        LexedProgram.checkValidToken(invalid1);
+        LexedProgram.checkValidToken(invalid1, null);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCheckValidTokenInvalidToken2() {
         String invalid2 = "(asdf";
-        LexedProgram.checkValidToken(invalid2);
+        LexedProgram.checkValidToken(invalid2, null);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCheckValidTokenInvalidToken3() {
         String invalid3 = "asdf)";
-        LexedProgram.checkValidToken(invalid3);
+        LexedProgram.checkValidToken(invalid3, null);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCheckValidTokenInvalidToken4() {
         String invalid4 = "asdf asdf";
-        LexedProgram.checkValidToken(invalid4);
+        LexedProgram.checkValidToken(invalid4, null);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCheckValidTokenInvalidToken5() {
         String invalid5 = "asdf\nasdf";
-        LexedProgram.checkValidToken(invalid5);
+        LexedProgram.checkValidToken(invalid5, null);
     }
 
     @Test
@@ -54,11 +54,11 @@ public class LexedProgramTest {
         LexerNode root = p.rootNode;
         // Root should be "begin"
         assertEquals(NodeType.FUNCTION, root.type);
-        assertEquals("begin", root.token);
+        assertEquals("begin", root.op.token);
         assertEquals(1, root.children.size());
         LexerNode child = root.children.get(0);
         assertEquals(NodeType.FUNCTION, child.type);
-        assertEquals("+", child.token);
+        assertEquals("+", child.op.token);
         assertEquals(2, child.children.size());
         LexerNode arg1 = child.children.get(0);
         LexerNode arg2 = child.children.get(1);
@@ -75,7 +75,7 @@ public class LexedProgramTest {
         LexerNode root = p.rootNode;
         // Root should be "begin"
         assertEquals(NodeType.FUNCTION, root.type);
-        assertEquals("begin", root.token);
+        assertEquals("begin", root.op.token);
         assertEquals(0, root.children.size());
     }
 
@@ -86,31 +86,31 @@ public class LexedProgramTest {
         LexerNode root = p.rootNode;
         // Root should be "begin"
         assertEquals(NodeType.FUNCTION, root.type);
-        assertEquals("begin", root.token);
+        assertEquals("begin", root.op.token);
         assertEquals(4, root.children.size());
     }
 
     @Test(expected = RuntimeException.class)
     public void testLexProgramStringFailedUnmatchedParens1() {
         String prog = "(";
-        LexedProgram p = LexedProgram.lexProgramString(prog);
+        LexedProgram.lexProgramString(prog);
     }
 
     @Test(expected = RuntimeException.class)
     public void testLexProgramStringFailedUnbalancedParens2() {
         String prog = "())";
-        LexedProgram p = LexedProgram.lexProgramString(prog);
+        LexedProgram.lexProgramString(prog);
     }
 
     @Test(expected = RuntimeException.class)
     public void testLexProgramStringFailedUnbalancedParens3() {
         String prog = "(()";
-        LexedProgram p = LexedProgram.lexProgramString(prog);
+        LexedProgram.lexProgramString(prog);
     }
 
     @Test(expected = RuntimeException.class)
     public void testLexProgramStringFailedNoOp() {
         String prog = "()";
-        LexedProgram p = LexedProgram.lexProgramString(prog);
+        LexedProgram.lexProgramString(prog);
     }
 }

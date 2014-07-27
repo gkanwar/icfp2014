@@ -13,6 +13,7 @@ import laml.compiler.lexer.LexerNode;
 import laml.compiler.lexer.LexerNode.NodeType;
 import laml.compiler.parser.EnvFrame.Binding;
 import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
+import laml.compiler.parser.EnvFrame.EnvException;
 
 public class Parser {
     private static CodeSequence parseNArgBuiltIn(String assemblyOp,
@@ -52,25 +53,27 @@ public class Parser {
             try {
                 // Try treating this as a numeric literal
                 int literal = Integer.parseInt(functionNode.token);
-                c.code.add(new Line(Arrays.asList(
-                        new Token(TokenType.OP, "LDC"),
-                        new Token(TokenType.CONST, literal)),
-                        ""));
+                c.code.add(Line.makeLdc(literal, ""));
             } catch (NumberFormatException e) {
                 // Not a numeric literal. Resolve this as a variable.
                 // findBindingDepth / findBindingIndex will complain if cannot
                 // be resolved.
                 String symbol = functionNode.token;
-                int depth = env.findBindingDepth(symbol);
-                // Special case: Cannot reference innermost environment from
-                // header code, since the header code is defining that
-                // environment using a dummy env and RAP. Instead, copy
-                // definition.
-                if (headerCode && depth == 0) {
-                    c.code.addAll(env.bindingMap.get(symbol).definition.code);
-                } else {
-                    c.code.add(Line.makeLd(depth, env.findBindingIndex(symbol),
-                            "Var " + symbol));
+                try {
+                    int depth = env.findBindingDepth(symbol);
+                    // Special case: Cannot reference innermost environment from
+                    // header code, since the header code is defining that
+                    // environment using a dummy env and RAP. Instead, copy
+                    // definition.
+                    if (headerCode && depth == 0) {
+                        c.code.addAll(env.bindingMap.get(symbol).definition.code);
+                    } else {
+                        c.code.add(Line.makeLd(depth, env
+                                .findBindingIndex(symbol),
+                                "Var " + symbol));
+                    }
+                } catch (EnvException e2) {
+                    throw new ParserException(e2.getMessage(), functionNode);
                 }
             }
         } else { // FUNCTION

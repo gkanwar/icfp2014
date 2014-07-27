@@ -14,8 +14,10 @@ public class LexerNode {
     // FUNCTION type
     public LexerNode op;
     public NodeType type;
+    // Line number meta-data
+    private int lineNum;
 
-    public LexerNode(NodeType type, String token) {
+    public LexerNode(NodeType type, String token, int lineNum) {
         if (type != NodeType.VARIABLE) {
             throw new RuntimeException(
                     "String token is only valid for variable type LexerNode");
@@ -23,9 +25,10 @@ public class LexerNode {
         children = new ArrayList<LexerNode>();
         this.type = type;
         this.token = token;
+        this.lineNum = lineNum;
     }
 
-    public LexerNode(NodeType type, LexerNode op) {
+    public LexerNode(NodeType type, LexerNode op, int lineNum) {
         if (type != NodeType.FUNCTION) {
             throw new RuntimeException(
                     "Node op is only valid for function type LexerNode");
@@ -33,6 +36,11 @@ public class LexerNode {
         children = new ArrayList<LexerNode>();
         this.type = type;
         this.op = op;
+        this.lineNum = lineNum;
+    }
+
+    public int getLineNum() {
+        return lineNum;
     }
 
     @Override
