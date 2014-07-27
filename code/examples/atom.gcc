@@ -1,0 +1,27 @@
+DUM 0 ; main_$body$ bindings
+LDF 4 ; Load main_$body$ body
+RAP 0 ; Call main_$body$ body
+RTN ; main return
+
+LDC 1 ; 
+ATOM ; 
+LDC 1 ; 
+LDC 2 ; 
+CONS ; 
+ATOM ; 
+LDF 17 ; 
+ATOM ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+RTN ; main_$body$ return
+
+DUM 0 ; func0_$body$ bindings
+LDF 21 ; Load func0_$body$ body
+RAP 0 ; Call func0_$body$ body
+RTN ; func0 return
+
+LDC 1 ; 
+RTN ; func0_$body$ return
+

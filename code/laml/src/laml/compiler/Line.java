@@ -122,6 +122,13 @@ public class Line {
                 comment);
     }
 
+    public static Line makeAp(int numBindings, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "AP"),
+                new Token(TokenType.CONST, numBindings)),
+                comment);
+    }
+
     public static Line makeRap(int numBindings, String comment) {
         return new Line(Arrays.asList(
                 new Token(TokenType.OP, "RAP"),

@@ -1,0 +1,37 @@
+DUM 4 ; main_$body$ bindings
+LDF 25 ; Define y
+LDF 25 ; Define y
+LDC 1 ; Define b
+LDC 2 ; 
+LDC 3 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+LDC 1 ; Define b
+LDC 2 ; 
+LDC 3 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+CAR ; 
+LDF 21 ; Load main_$body$ body
+RAP 4 ; Call main_$body$ body
+RTN ; main return
+
+LD 0 3 ; Var b
+LD 0 1 ; Var y
+AP 1 ; Func call y
+RTN ; main_$body$ return
+
+DUM 0 ; func0_$body$ bindings
+LDF 29 ; Load func0_$body$ body
+RAP 0 ; Call func0_$body$ body
+RTN ; func0 return
+
+LD 1 0 ; Var n
+LDC 1 ; 
+ADD ; 
+RTN ; func0_$body$ return
+

@@ -1,0 +1,7 @@
+(define x
+  (lambda (n) (+ n 1)))
+(define y x)
+(define a (list 1 2 3))
+(define b (car a))
+;; Should return 2
+(y b)

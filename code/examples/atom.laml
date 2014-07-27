@@ -1,0 +1,2 @@
+;; Should return (1 0 0)
+(list (atom 1) (atom (cons 1 2)) (atom (lambda (x) 1)))

@@ -17,22 +17,17 @@ import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 public class Parser {
     private static CodeSequence parseNArgBuiltIn(String assemblyOp,
             int numArgs, LexerNode functionNode, EnvFrame env,
-            Map<String, ParserLabeledBlock> globalFuncMap) {
+            Map<String, ParserLabeledBlock> globalFuncMap, boolean headerCode) {
         if (functionNode.children.size() != numArgs) {
             throw new RuntimeException("+ takes " + numArgs + " arguments");
         }
         CodeSequence out = new CodeSequence();
         for (LexerNode child : functionNode.children) {
-            out.code.addAll(parseNode(child, env, globalFuncMap).code);
+            out.code.addAll(parseNode(child, env, globalFuncMap, headerCode).code);
         }
         out.code.add(new Line(Arrays
                 .asList(new Token(TokenType.OP, assemblyOp)), ""));
         return out;
-    }
-
-    public static CodeSequence parseNode(LexerNode functionNode, EnvFrame env,
-            Map<String, ParserLabeledBlock> globalFuncMap) {
-        return parseNode(functionNode, env, globalFuncMap, false);
     }
 
     /**
@@ -85,62 +80,62 @@ public class Parser {
                 if (op.token.equals("+")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "ADD", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("-")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "SUB", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("*")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "MUL", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("/")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "DIV", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("=")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CEQ", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals(">")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CGT", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals(">=")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CGTE", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("cons")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CONS", 2,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("atom")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "ATOM", 1,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("car")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CAR", 1,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("cdr")) {
                     c.code.addAll(parseNArgBuiltIn(
                             "CDR", 1,
-                            functionNode, env, globalFuncMap).code);
+                            functionNode, env, globalFuncMap, headerCode).code);
                 }
                 else if (op.token.equals("begin")) {
                     for (LexerNode child : functionNode.children) {
                         CodeSequence childCode = parseNode(child, env,
-                                globalFuncMap);
+                                globalFuncMap, headerCode);
                         c.code.addAll(childCode.code);
                     }
                 }
@@ -154,14 +149,15 @@ public class Parser {
                                         + " arguments.", functionNode);
                     }
                     CodeSequence predicate = parseNode(
-                            functionNode.children.get(0), env, globalFuncMap);
+                            functionNode.children.get(0), env, globalFuncMap,
+                            headerCode);
                     c.code.addAll(predicate.code);
                     String trueBranchLabel = getUniqueName(globalFuncMap);
                     // HACK: Claim this label so an inner branch can't conflict
                     globalFuncMap.put(trueBranchLabel, null);
                     ParserBranch trueBranch = new ParserBranch(trueBranchLabel,
                             parseNode(functionNode.children.get(1), env,
-                                    globalFuncMap));
+                                    globalFuncMap, headerCode));
                     // Now replace the labeled block ref with the actual block
                     globalFuncMap.put(trueBranchLabel, trueBranch);
                     String falseBranchLabel = getUniqueName(globalFuncMap);
@@ -170,7 +166,7 @@ public class Parser {
                     ParserBranch falseBranch = new ParserBranch(
                             falseBranchLabel,
                             parseNode(functionNode.children.get(2), env,
-                                    globalFuncMap));
+                                    globalFuncMap, headerCode));
                     // Now replace the labeled block ref with the actual block
                     globalFuncMap.put(falseBranchLabel, falseBranch);
                     c.code.add(Line.makeSel(
@@ -252,19 +248,20 @@ public class Parser {
                     EnvFrame funcEnv = new EnvFrame(argEnv);
                     CodeSequence definition = parseNode(
                             functionNode.children.get(1), funcEnv,
-                            globalFuncMap);
+                            globalFuncMap,
+                            // Drop out of header mode, since we're
+                            // in a new env context
+                            false);
                     String uniqueName = getUniqueName(globalFuncMap);
                     globalFuncMap.put(uniqueName, new ParserFunction(
                             uniqueName, funcEnv, definition));
-                    c.code.add(new Line(Arrays.asList(
-                            new Token(TokenType.OP, "LDF"),
-                            new Token(TokenType.LABEL, uniqueName)),
-                            ""));
+                    c.code.add(Line.makeLdf(uniqueName, ""));
                 }
                 else if (op.token.equals("list")) {
                     // First push all children
                     for (LexerNode child : functionNode.children) {
-                        c.code.addAll(parseNode(child, env, globalFuncMap).code);
+                        c.code.addAll(parseNode(child, env, globalFuncMap,
+                                headerCode).code);
                     }
                     // Then push NIL
                     c.code.add(Line.makeNil(""));
@@ -276,7 +273,8 @@ public class Parser {
                 else if (op.token.equals("tuple")) {
                     // First push all children
                     for (LexerNode child : functionNode.children) {
-                        c.code.addAll(parseNode(child, env, globalFuncMap).code);
+                        c.code.addAll(parseNode(child, env,
+                                globalFuncMap, headerCode).code);
                     }
                     // Then execute CONS once for each child - 1
                     for (int i = 0; i < functionNode.children.size() - 1; ++i) {
@@ -289,11 +287,11 @@ public class Parser {
                     // User-defined variable op
                     for (LexerNode child : functionNode.children) {
                         CodeSequence definition = parseNode(child, env,
-                                globalFuncMap);
+                                globalFuncMap, headerCode);
                         c.code.addAll(definition.code);
                     }
                     // Load the function and call it
-                    c.code.addAll(parseNode(op, env, globalFuncMap).code);
+                    c.code.addAll(parseNode(op, env, globalFuncMap, headerCode).code);
                     c.code.add(new Line(Arrays.asList(
                             new Token(TokenType.OP, "AP"),
                             new Token(TokenType.CONST,
@@ -306,15 +304,12 @@ public class Parser {
                 // arg numbers. Type checking is annoying...
                 for (LexerNode child : functionNode.children) {
                     CodeSequence definition = parseNode(child, env,
-                            globalFuncMap);
+                            globalFuncMap, headerCode);
                     c.code.addAll(definition.code);
                 }
                 // Load function and call it
-                c.code.addAll(parseNode(op, env, globalFuncMap).code);
-                c.code.add(new Line(Arrays.asList(
-                        new Token(TokenType.OP, "AP"),
-                        new Token(TokenType.CONST,
-                                functionNode.children.size())),
+                c.code.addAll(parseNode(op, env, globalFuncMap, headerCode).code);
+                c.code.add(Line.makeAp(functionNode.children.size(),
                         "Func call " + op.toString()));
             }
         }
@@ -347,7 +342,7 @@ public class Parser {
         EnvFrame rootEnv = new EnvFrame();
         Map<String, ParserLabeledBlock> globalFuncMap = new HashMap<String, ParserLabeledBlock>();
         CodeSequence mainCode = parseNode(lexProg.rootNode, rootEnv,
-                globalFuncMap);
+                globalFuncMap, false);
         ParserFunction mainFunc = new ParserFunction("main", rootEnv, mainCode);
         prog.addLabeledFunctions(mainFunc.toLabeledFunctions());
         for (ParserLabeledBlock func : globalFuncMap.values()) {
