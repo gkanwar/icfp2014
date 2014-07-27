@@ -1,10 +1,11 @@
 ;; Empty list
 (define nil 0)
+;; Null doesn't actually check against nil, because for a real list
+;; we'll get a tag mismatch. Just assumes that a non-pair value is a
+;; null list.
 (define null?
   (lambda (l)
-    (and
-     (atom l)
-     (= nil l))))
+    (atom l)))
 
 (define list-ref
   (lambda (l index)
@@ -17,3 +18,10 @@
     (if (null? l)
         0
         (+ 1 (list-size (cdr l))))))
+
+(define tuple-size
+  (lambda (t)
+    (if (atom (cdr t))
+        ;; Last pair of the tuple: 2 elts
+        2
+        (+ 1 (tuple-size (cdr t))))))

@@ -22,7 +22,7 @@
 
 (define check-row-in-bounds
   (lambda (world-map row)
-    (if (< 0 row)
+    (if (< row 0)
         false
         (if (>= row (list-size world-map))
             false
@@ -30,7 +30,7 @@
 
 (define check-col-in-bounds
   (lambda (world-map col)
-    (if (< 0 col)
+    (if (< col 0)
         false
         (if (>= col (list-size (car world-map)))
             false
@@ -41,7 +41,8 @@
     (if (not (and
               (check-row-in-bounds world-map row)
               (check-col-in-bounds world-map col)))
-        false
+        ;; If out-of-bounds, consider it a wall
+        true
         (= wall (get-map-val world-map row col)))))
 
 (define get-dir-coords

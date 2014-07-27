@@ -3,14 +3,14 @@
     (begin
       (define world-map (get-world-map world))
       (define player-loc (get-player-loc (get-player-status world)))
-      (define player-row (car player-loc))
-      (define player-col (cdr player-loc))
+      (define player-col (car player-loc))
+      (define player-row (cdr player-loc))
       (if (dir-works world-map state-dir player-row player-col)
           (cons state-dir state-dir)
           (cons (wrap-dir (+ state-dir 1)) (wrap-dir (+ state-dir 1)))))))
 
 (define init
   (lambda (THUNK)
-    (cons right step)))
+    (cons up step)))
 
 (init)
