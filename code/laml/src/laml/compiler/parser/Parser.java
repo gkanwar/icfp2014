@@ -133,8 +133,12 @@ public class Parser {
                 }
                 else if (op.token.equals("if")) {
                     if (functionNode.children.size() != 3) {
-                        throw new RuntimeException(
-                                "if takes three arguments: the prediction, true branch, and false branch");
+                        throw new ParserException(
+                                "if takes three arguments: "
+                                        + "the prediction, true branch, and false branch. "
+                                        +
+                                        "Got " + functionNode.children.size()
+                                        + " arguments.", functionNode);
                     }
                     CodeSequence predicate = parseNode(
                             functionNode.children.get(0), env, globalFuncMap);

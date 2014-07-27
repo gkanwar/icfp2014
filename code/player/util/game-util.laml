@@ -1,0 +1,106 @@
+(define wall 0)
+(define empty 1)
+(define pill 2)
+(define power-pill 3)
+(define fruit 4)
+(define player-start 5)
+(define ghost-start 6)
+
+(define ghost-vitality-standard 0)
+(define ghost-vitality-fright 1)
+(define ghost-vitality-invisible 2)
+
+(define up 0)
+(define right 1)
+(define down 2)
+(define left 3)
+
+(define get-map-val
+  (lambda (world-map row col)
+    (list-ref (list-ref world-map row) col)))
+
+(define check-row-in-bounds
+  (lambda (world-map row)
+    (if (< 0 row)
+        true
+        (if (>= row (list-size world-map))
+            false
+            true))))
+
+(define check-col-in-bounds
+  (lambda (world-map col)
+    (if (< 0 col)
+        false
+        (if (>= col (list-size (car world-map)))
+            false
+            true))))
+
+(define is-wall
+  (lambda (world-map row col)
+    (if (not (and
+              (check-row-in-bounds world-map row)
+              (check-col-in-bounds world-map col)))
+        false
+        (= wall (get-map-val world-map row col)))))
+
+(define get-dir-coords
+  (lambda (dir row-start col-start)
+    (if (= dir up)
+        (list (- row-start 1) col-start)
+        (if (= dir right)
+            (list row-start (+ col-start 1))
+            (if (= dir down)
+                (list (+ row-start 1) col-start)
+                (if (= dir left)
+                    (list row-start (- col-start 1))
+                    false))))))
+
+(define get-world-map
+  (lambda (world-state)
+    (car world-state)))
+
+(define get-player-status
+  (lambda (world-state)
+    (list-ref world-state 1)))
+
+(define get-ghost-status
+  (lambda (world-state)
+    (list-ref world-state 2)))
+
+(define get-fruit-status
+  (lambda (world-state)
+    (list-ref world-state 3)))
+
+(define get-player-vitality
+  (lambda (player-status)
+    (car player-status)))
+
+(define get-player-loc
+  (lambda (player-status)
+    (list-ref player-status 1)))
+
+(define get-player-dir
+  (lambda (player-status)
+    (list-ref player-status 2)))
+
+(define get-player-lives
+  (lambda (player-status)
+    (list-ref player-status 3)))
+
+(define get-player-score
+  (lambda (player-status)
+    (list-ref player-status 4)))
+
+(define dir-works
+  (lambda (world-map dir row col)
+    (begin
+      (define player-next-loc (get-dir-coords dir row col))
+      (define player-next-row (car player-next-loc))
+      (define player-next-col (cdr player-next-loc))
+      (not (is-wall world-map player-next-row player-next-col)))))
+
+(define wrap-dir
+  (lambda (maybe-dir)
+    (if (> maybe-dir 3)
+        (- maybe-dir 4)
+        maybe-dir)))

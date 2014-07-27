@@ -1,29 +1,16 @@
-(define get-map-val
-  (lambda (world-map row col)
-    (list-ref (list-ref world-map row) col)))
-
-(define check-row-in-bounds
-  (lambda (world-map row)
-    (if (< 0 row)
-        0
-        (if (>= row (list-size world-map))
-            0
-            1))))
-
-(define check-col-in-bounds
-  (lambda (world-map col)
-    (if (< 0 col)
-        0
-        (if (>= col (list-size (car world-map)))
-            0
-            1))))
-
 (define step
-  (lambda (state world)
-    (cons (+ state 1) 1)))
+  (lambda (state-dir world)
+    (begin
+      (define world-map (get-world-map world))
+      (define player-loc (get-player-loc (get-player-status world)))
+      (define player-row (car player-loc))
+      (define player-col (cdr player-loc))
+      (if (dir-works world-map state-dir player-row player-col)
+          (cons state-dir state-dir)
+          (cons (wrap-dir (+ state-dir 1)) (wrap-dir (+ state-dir 1)))))))
 
 (define init
   (lambda (THUNK)
-    (cons 0 step)))
+    (cons up step)))
 
 (init)

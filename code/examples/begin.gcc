@@ -1,0 +1,28 @@
+DUM 1 ; main_$body$ bindings
+LDF 9 ; Define complex
+LDF 5 ; Load main_$body$ body
+RAP 1 ; Call main_$body$ body
+RTN ; main return
+
+LDC 10 ; 
+LD 0 0 ; Var complex
+AP 1 ; Func call complex
+RTN ; main_$body$ return
+
+DUM 3 ; func0_$body$ bindings
+LDC 1 ; Define y
+LDC 2 ; Define z
+LDC 3 ; Define a
+LDF 16 ; Load func0_$body$ body
+RAP 3 ; Call func0_$body$ body
+RTN ; func0 return
+
+LD 0 2 ; Var a
+LD 1 0 ; Var x
+LD 0 0 ; Var y
+LD 0 1 ; Var z
+ADD ; 
+MUL ; 
+SUB ; 
+RTN ; func0_$body$ return
+

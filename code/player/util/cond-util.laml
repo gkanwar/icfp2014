@@ -1,3 +1,6 @@
+(define false 0)
+(define true 1)
+
 (define <
   (lambda (num1 num2)
     (if (>= num1 num2)
@@ -9,3 +12,25 @@
     (if (> num1 num2)
         0
         1)))
+
+(define not
+  (lambda (bool)
+    (if bool
+        0
+        1)))
+
+(define or
+  (lambda (cond1 cond2)
+    (if cond1
+        1
+        (if cond2
+            1
+            0))))
+
+(define and
+  (lambda (cond1 cond2)
+    (if (not cond1)
+        0
+        (if (not cond2)
+            0
+            1))))
