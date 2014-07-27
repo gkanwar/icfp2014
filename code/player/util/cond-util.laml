@@ -20,20 +20,32 @@
         0
         1)))
 
-;; Short-circuit OR
+;; WARNING: This OR will evaluate both args before choosing a result.
+;; Use sc-or for the short-circuit version, which accepts thunks.
 (define or
   (lambda (cond1 cond2)
     (if cond1
-        1
-        (if cond2
-            1
-            0))))
+        true
+        cond2)))
 
-;; Short-circuit AND
+;; WARNING: This AND will evaluate both args before choosing a result.
+;; Use sc-and for the short-circuit version, which accepts thunks.
 (define and
   (lambda (cond1 cond2)
     (if (not cond1)
-        0
-        (if (not cond2)
-            0
-            1))))
+        false
+        cond2)))
+
+;; Short-circuit OR
+(define sc-or
+  (lambda (cond-thunk1 cond-thunk2)
+    (if (cond-thunk1)
+        true
+        (cond-thunk2))))
+
+;; Short-circuit AND
+(define sc-and
+  (lambda (cond-thunk1 cond-thunk2)
+    (if (not (cond-thunk1))
+        false
+        (cond-thunk2))))

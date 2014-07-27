@@ -15,48 +15,60 @@
 (define right 1)
 (define down 2)
 (define left 3)
+(define all-dirs (list up right down left))
+
+;; Locations are defines as a (row, col) tuple
+(define make-loc
+  (lambda (row col)
+    (cons row col)))
+(define get-loc-row
+  (lambda (loc)
+    (car loc)))
+(define get-loc-col
+  (lambda (loc)
+    (cdr loc)))
+(define loc=?
+  (lambda (loc1 loc2)
+    (and (= (get-loc-row loc1)
+            (get-loc-row loc2))
+         (= (get-loc-col loc1)
+            (get-loc-col loc2)))))
 
 ;; Doesn't bound check, that should be done externally
 (define get-map-val
-  (lambda (world-map row col)
-    (list-ref (list-ref world-map row) col)))
+  (lambda (world-map loc)
+    (list-ref
+     (list-ref world-map (get-loc-row loc))
+     (get-loc-col loc))))
 
-(define check-row-in-bounds
-  (lambda (world-map row)
-    (if (< row 0)
-        false
-        (if (>= row (list-size world-map))
-            false
-            true))))
-
-(define check-col-in-bounds
-  (lambda (world-map col)
-    (if (< col 0)
-        false
-        (if (>= col (list-size (car world-map)))
-            false
-            true))))
+(define check-loc-in-bounds
+  (lambda (world-map loc)
+    (and (and (>= (get-loc-row loc) 0)
+              (< (get-loc-row loc) (list-size world-map)))
+         (and (>= (get-loc-col) 0)
+              (< (get-loc-col) (list-size world-map))))))
 
 (define is-wall
-  (lambda (world-map row col)
-    (if (not (and
-              (check-row-in-bounds world-map row)
-              (check-col-in-bounds world-map col)))
+  (lambda (world-map loc)
+    (if (not (check-loc-in-bounds loc))
         ;; If out-of-bounds, consider it a wall
         true
-        (= wall (get-map-val world-map row col)))))
+        (= wall (get-map-val world-map loc)))))
 
-(define get-dir-coords
-  (lambda (dir row-start col-start)
-    (if (= dir up)
-        (cons (- row-start 1) col-start)
-        (if (= dir right)
-            (cons row-start (+ col-start 1))
-            (if (= dir down)
-                (cons (+ row-start 1) col-start)
-                (if (= dir left)
-                    (cons row-start (- col-start 1))
-                    false))))))
+(define get-dir-loc
+  (lambda (dir loc)
+    (begin
+      (define row-start (get-loc-row loc))
+      (define col-start (get-loc-col loc))
+      (if (= dir up)
+          (make-loc (- row-start 1) col-start)
+          (if (= dir right)
+              (make-loc row-start (+ col-start 1))
+              (if (= dir down)
+                  (make-loc (+ row-start 1) col-start)
+                  (if (= dir left)
+                      (make-loc row-start (- col-start 1))
+                      false)))))))
 
 (define get-world-map
   (lambda (world-state)
@@ -95,15 +107,52 @@
     (list-ref player-status 4)))
 
 (define dir-works
-  (lambda (world-map dir row col)
+  (lambda (world-map dir loc)
     (begin
-      (define player-next-loc (get-dir-coords dir row col))
-      (define player-next-row (car player-next-loc))
-      (define player-next-col (cdr player-next-loc))
-      (not (is-wall world-map player-next-row player-next-col)))))
+      (define player-next-loc (get-dir-loc dir loc))
+      (not (is-wall world-map player-next-loc)))))
 
 (define wrap-dir
   (lambda (maybe-dir)
     (if (> maybe-dir 3)
         (- maybe-dir 4)
         maybe-dir)))
+
+(define opposing-dir?
+  (lambda (dir1 dir2)
+    (begin
+      (define diff (- dir1 dir2))
+      (or (= diff 2)
+          (= diff -2)))))
+
+(define get-opposing-dir
+  (lambda (dir)
+    (wrap-dir (+ dir 2))))
+
+(define find-item-locs
+  (lambda (world-map item)
+    (begin
+      ;; Iterate over world map row with index
+      (define find-item-indices-in-row
+        (lambda (world-map-row col-index)
+          ;; Returns a list of column indices for items found in this row
+          (if (null? world-map-row)
+              nil
+              (if (= (car world-map-row) item)
+                  (cons col-index (find-item-indices-in-row
+                                   (cdr world-map-row) (+ col-index 1)))
+                  (find-item-indices-in-row
+                   (cdr world-map-row) (+ col-index 1))))))
+      ;; Iterate over the entire world map list-of-lists with index
+      (define find-item-indices
+        (lambda (world-map row-index)
+          (if (null? world-map)
+              nil
+              (list-extend
+               (map
+                (lambda (col-index)
+                  (cons row-index col-index))
+                ;; Translate the list of column indices into (row, col) pairs
+                (find-item-indices-in-row (car world-map) 0))
+               (find-item-indices world-map (+ row-index 1))))))
+      (find-item-indices world-map 0))))

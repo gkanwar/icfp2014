@@ -32,3 +32,28 @@
     (if (null? l)
         nil
         (cons (func (car l)) (map func (cdr l))))))
+
+(define filter
+  (lambda (func l)
+    (if (null? l)
+        nil
+        (if (func (car l))
+            (cons (car l) (filter func (cdr l)))
+            (filter func (cdr l))))))
+
+(define fold-left
+  (lambda (func accum l)
+    ;; func - (f accum next) -> new-accum
+    ;; accum - accumulator value
+    ;; l - list to fold
+    (if (null? l)
+        accum
+        (fold-left func (func accum (car l)) (cdr l)))))
+
+;; Return new list containing l1 then l2
+(define list-extend
+  (lambda (l1 l2)
+    (if (null? l1)
+        l2
+        (cons (car l1)
+              (list-extend (cdr l1) l2)))))

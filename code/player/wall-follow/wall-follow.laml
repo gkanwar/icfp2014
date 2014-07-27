@@ -1,13 +1,24 @@
 ;;;; -*- mode: scheme -*-
+
+;; Extend this with additional state bits, adding accessors
+;; below as you go.
+(define build-state
+  (lambda (dir)
+    (list dir)))
+
+(define get-state-dir
+  (lambda (state)
+    (car state)))
+
+;;;; Simple AI to move in each direction until it can't any more. Rotates
+;;;; direction choice clockwise.
 (define step
   (lambda (state world)
     (begin
       (define world-map (get-world-map world))
       (define player-loc (get-player-loc (get-player-status world)))
-      (define player-col (car player-loc))
-      (define player-row (cdr player-loc))
       (define state-dir (get-state-dir state))
-      (if (dir-works world-map state-dir player-row player-col)
+      (if (dir-works world-map state-dir player-loc)
           (cons state state-dir)
           (begin
             (define new-dir (wrap-dir (+ state-dir 1)))

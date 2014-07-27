@@ -1,17 +1,17 @@
-DUM 47 ; main_$body$ bindings
+DUM 51 ; main_$body$ bindings
 LDC 0 ; Define false
 LDC 1 ; Define true
-LDF 139 ; Define <
-LDF 156 ; Define <=
-LDF 207 ; Define not
-LDF 393 ; Define or
-LDF 536 ; Define and
+LDF 153 ; Define <
+LDF 173 ; Define <=
+LDF 219 ; Define not
+LDF 392 ; Define or
+LDF 555 ; Define and
 LDC 0 ; Define nil
-LDF 434 ; Define null?
-LDF 382 ; Define list-ref
-LDF 400 ; Define list-size
-LDF 545 ; Define tuple-size
-LDF 269 ; Define map
+LDF 435 ; Define null?
+LDF 381 ; Define list-ref
+LDF 399 ; Define list-size
+LDF 564 ; Define tuple-size
+LDF 337 ; Define map
 LDC 0 ; Define wall
 LDC 1 ; Define empty
 LDC 2 ; Define pill
@@ -26,133 +26,148 @@ LDC 0 ; Define up
 LDC 1 ; Define right
 LDC 2 ; Define down
 LDC 3 ; Define left
-LDF 257 ; Define get-map-val
-LDF 309 ; Define check-row-in-bounds
-LDF 177 ; Define check-col-in-bounds
-LDF 189 ; Define is-wall
-LDF 72 ; Define get-dir-coords
-LDF 121 ; Define get-world-map
-LDF 112 ; Define get-player-status
-LDF 103 ; Define get-ghost-status
-LDF 94 ; Define get-fruit-status
-LDF 128 ; Define get-player-vitality
-LDF 54 ; Define get-player-loc
-LDF 63 ; Define get-player-dir
-LDF 465 ; Define get-player-lives
-LDF 486 ; Define get-player-score
-LDF 499 ; Define dir-works
-LDF 441 ; Define wrap-dir
-LDF 450 ; Define build-state
-LDF 458 ; Define get-state-dir
-LDF 323 ; Define step
-LDF 297 ; Define init
-LDF 51 ; Load main_$body$ body
-RAP 47 ; Call main_$body$ body
+LDF 329 ; Define make-loc
+LDF 322 ; Define get-loc-row
+LDF 315 ; Define get-loc-col
+LDF 299 ; Define get-map-val
+LDF 264 ; Define check-loc-in-bounds
+LDF 357 ; Define is-wall
+LDF 249 ; Define get-dir-loc
+LDF 242 ; Define get-world-map
+LDF 162 ; Define get-player-status
+LDF 94 ; Define get-ghost-status
+LDF 85 ; Define get-fruit-status
+LDF 78 ; Define get-player-vitality
+LDF 69 ; Define get-player-loc
+LDF 136 ; Define get-player-dir
+LDF 127 ; Define get-player-lives
+LDF 118 ; Define get-player-score
+LDF 103 ; Define dir-works
+LDF 60 ; Define wrap-dir
+LDF 494 ; Define oppposing-dir?
+LDF 522 ; Define get-opposing-dir
+LDF 536 ; Define build-state
+LDF 548 ; Define get-state-dir
+LDF 446 ; Define step
+LDF 484 ; Define init
+LDF 55 ; Load main_$body$ body
+RAP 51 ; Call main_$body$ body
 RTN ; main return
 
-LD 0 46 ; Var init
+LD 0 50 ; Var init
 AP 0 ; Func call init
 RTN ; main_$body$ return
 
-DUM 0 ; func60_$body$ bindings
-LDF 58 ; Load func60_$body$ body
-RAP 0 ; Call func60_$body$ body
-RTN ; func60 return
-
-LD 1 0 ; Var player-status
-LDC 1 ; 
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
-RTN ; func60_$body$ return
+LD 1 0 ; Var maybe-dir
+JOIN ; func60 join
 
 DUM 0 ; func61_$body$ bindings
-LDF 67 ; Load func61_$body$ body
+LDF 64 ; Load func61_$body$ body
 RAP 0 ; Call func61_$body$ body
 RTN ; func61 return
 
-LD 1 0 ; Var player-status
-LDC 2 ; 
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
+LD 1 0 ; Var maybe-dir
+LDC 3 ; 
+CGT ; 
+SEL 145 58 ; Sel on predicate (> maybe-dir 3 )
 RTN ; func61_$body$ return
 
 DUM 0 ; func54_$body$ bindings
-LDF 76 ; Load func54_$body$ body
+LDF 73 ; Load func54_$body$ body
 RAP 0 ; Call func54_$body$ body
 RTN ; func54 return
 
-LD 1 0 ; Var dir
-LD 2 23 ; Var up
-CEQ ; 
-SEL 227 222 ; Sel on predicate (= dir up )
+LD 1 0 ; Var player-status
+LDC 1 ; 
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
 RTN ; func54_$body$ return
 
-LD 2 0 ; Var false
-JOIN ; func53 join
+DUM 0 ; func53_$body$ bindings
+LDF 82 ; Load func53_$body$ body
+RAP 0 ; Call func53_$body$ body
+RTN ; func53 return
 
-LD 1 1 ; Var row-start
-LD 1 2 ; Var col-start
-LDC 1 ; 
-SUB ; 
-CONS ; 
-JOIN ; func52 join
+LD 1 0 ; Var player-status
+CAR ; 
+RTN ; func53_$body$ return
 
-LD 1 0 ; Var dir
-LD 2 26 ; Var left
-CEQ ; 
-SEL 83 81 ; Sel on predicate (= dir left )
-JOIN ; func51 join
-
-DUM 0 ; func58_$body$ bindings
-LDF 98 ; Load func58_$body$ body
-RAP 0 ; Call func58_$body$ body
-RTN ; func58 return
+DUM 0 ; func52_$body$ bindings
+LDF 89 ; Load func52_$body$ body
+RAP 0 ; Call func52_$body$ body
+RTN ; func52 return
 
 LD 1 0 ; Var world-state
 LDC 3 ; 
 LD 2 9 ; Var list-ref
 AP 2 ; Func call list-ref
-RTN ; func58_$body$ return
+RTN ; func52_$body$ return
 
-DUM 0 ; func57_$body$ bindings
-LDF 107 ; Load func57_$body$ body
-RAP 0 ; Call func57_$body$ body
-RTN ; func57 return
+DUM 0 ; func51_$body$ bindings
+LDF 98 ; Load func51_$body$ body
+RAP 0 ; Call func51_$body$ body
+RTN ; func51 return
 
 LD 1 0 ; Var world-state
 LDC 2 ; 
 LD 2 9 ; Var list-ref
 AP 2 ; Func call list-ref
+RTN ; func51_$body$ return
+
+DUM 1 ; func58_$body$ bindings
+LD 1 1 ; Define player-next-loc
+LD 1 2 ; Var loc
+LD 2 33 ; Var get-dir-loc
+AP 2 ; Func call get-dir-loc
+LDF 111 ; Load func58_$body$ body
+RAP 1 ; Call func58_$body$ body
+RTN ; func58 return
+
+LD 1 0 ; Var world-map
+LD 0 0 ; Var player-next-loc
+LD 2 32 ; Var is-wall
+AP 2 ; Func call is-wall
+LD 2 4 ; Var not
+AP 1 ; Func call not
+RTN ; func58_$body$ return
+
+DUM 0 ; func57_$body$ bindings
+LDF 122 ; Load func57_$body$ body
+RAP 0 ; Call func57_$body$ body
+RTN ; func57 return
+
+LD 1 0 ; Var player-status
+LDC 4 ; 
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
 RTN ; func57_$body$ return
 
 DUM 0 ; func56_$body$ bindings
-LDF 116 ; Load func56_$body$ body
+LDF 131 ; Load func56_$body$ body
 RAP 0 ; Call func56_$body$ body
 RTN ; func56 return
 
-LD 1 0 ; Var world-state
-LDC 1 ; 
+LD 1 0 ; Var player-status
+LDC 3 ; 
 LD 2 9 ; Var list-ref
 AP 2 ; Func call list-ref
 RTN ; func56_$body$ return
 
 DUM 0 ; func55_$body$ bindings
-LDF 125 ; Load func55_$body$ body
+LDF 140 ; Load func55_$body$ body
 RAP 0 ; Call func55_$body$ body
 RTN ; func55 return
 
-LD 1 0 ; Var world-state
-CAR ; 
+LD 1 0 ; Var player-status
+LDC 2 ; 
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
 RTN ; func55_$body$ return
 
-DUM 0 ; func59_$body$ bindings
-LDF 132 ; Load func59_$body$ body
-RAP 0 ; Call func59_$body$ body
-RTN ; func59 return
-
-LD 1 0 ; Var player-status
-CAR ; 
-RTN ; func59_$body$ return
+LD 1 0 ; Var maybe-dir
+LDC 4 ; 
+SUB ; 
+JOIN ; func59 join
 
 LDC 0 ; 
 JOIN ; func0 join
@@ -161,174 +176,233 @@ LDC 1 ;
 JOIN ; func1 join
 
 DUM 0 ; func2_$body$ bindings
-LDF 143 ; Load func2_$body$ body
+LDF 157 ; Load func2_$body$ body
 RAP 0 ; Call func2_$body$ body
 RTN ; func2 return
 
 LD 1 0 ; Var num1
 LD 1 1 ; Var num2
 CGTE ; 
-SEL 135 137 ; Sel on predicate (>= num1 num2 )
+SEL 149 151 ; Sel on predicate (>= num1 num2 )
 RTN ; func2_$body$ return
 
-LD 1 1 ; Var row-start
+DUM 0 ; func50_$body$ bindings
+LDF 166 ; Load func50_$body$ body
+RAP 0 ; Call func50_$body$ body
+RTN ; func50 return
+
+LD 1 0 ; Var world-state
 LDC 1 ; 
-ADD ; 
-LD 1 2 ; Var col-start
-CONS ; 
-JOIN ; func50 join
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
+RTN ; func50_$body$ return
 
 LDC 0 ; 
 JOIN ; func3 join
 
 DUM 0 ; func5_$body$ bindings
-LDF 160 ; Load func5_$body$ body
+LDF 177 ; Load func5_$body$ body
 RAP 0 ; Call func5_$body$ body
 RTN ; func5 return
 
 LD 1 0 ; Var num1
 LD 1 1 ; Var num2
 CGT ; 
-SEL 154 167 ; Sel on predicate (> num1 num2 )
+SEL 171 187 ; Sel on predicate (> num1 num2 )
 RTN ; func5_$body$ return
 
-LD 2 1 ; Var true
+LD 1 0 ; Var dir
+LD 2 24 ; Var right
+CEQ ; 
+SEL 205 198 ; Sel on predicate (= dir right )
 JOIN ; func41 join
 
 LDC 1 ; 
 JOIN ; func4 join
 
-LD 2 0 ; Var false
+LD 0 0 ; Var row-start
+LDC 1 ; 
+SUB ; 
+LD 0 1 ; Var col-start
+LD 2 27 ; Var make-loc
+AP 2 ; Func call make-loc
 JOIN ; func40 join
 
 LDC 1 ; 
 JOIN ; func7 join
 
-LD 2 1 ; Var true
+LD 1 0 ; Var dir
+LD 2 25 ; Var down
+CEQ ; 
+SEL 226 214 ; Sel on predicate (= dir down )
 JOIN ; func43 join
 
 LDC 0 ; 
 JOIN ; func6 join
 
-DUM 0 ; func42_$body$ bindings
-LDF 181 ; Load func42_$body$ body
-RAP 0 ; Call func42_$body$ body
-RTN ; func42 return
-
-LD 1 1 ; Var col
-LDC 0 ; 
-LD 2 2 ; Var <
-AP 2 ; Func call <
-SEL 307 289 ; Sel on predicate (< col 0 )
-RTN ; func42_$body$ return
+LD 0 0 ; Var row-start
+LD 0 1 ; Var col-start
+LDC 1 ; 
+ADD ; 
+LD 2 27 ; Var make-loc
+AP 2 ; Func call make-loc
+JOIN ; func42 join
 
 LDC 1 ; 
 JOIN ; func9 join
 
-DUM 0 ; func45_$body$ bindings
-LDF 193 ; Load func45_$body$ body
-RAP 0 ; Call func45_$body$ body
-RTN ; func45 return
-
-LD 1 0 ; Var world-map
-LD 1 1 ; Var row
-LD 2 28 ; Var check-row-in-bounds
-AP 2 ; Func call check-row-in-bounds
-LD 1 0 ; Var world-map
-LD 1 2 ; Var col
-LD 2 29 ; Var check-col-in-bounds
-AP 2 ; Func call check-col-in-bounds
-LD 2 6 ; Var and
-AP 2 ; Func call and
-LD 2 4 ; Var not
-AP 1 ; Func call not
-SEL 173 214 ; Sel on predicate (not (and (check-row-in-bounds world-map row ) (check-col-in-bounds world-map col ) ) )
-RTN ; func45_$body$ return
+LD 1 0 ; Var dir
+LD 2 26 ; Var left
+CEQ ; 
+SEL 235 233 ; Sel on predicate (= dir left )
+JOIN ; func45 join
 
 DUM 0 ; func8_$body$ bindings
-LDF 211 ; Load func8_$body$ body
+LDF 223 ; Load func8_$body$ body
 RAP 0 ; Call func8_$body$ body
 RTN ; func8 return
 
 LD 1 0 ; Var bool
-SEL 175 171 ; Sel on predicate bool
+SEL 203 196 ; Sel on predicate bool
 RTN ; func8_$body$ return
 
-LD 2 13 ; Var wall
-LD 1 0 ; Var world-map
-LD 1 1 ; Var row
-LD 1 2 ; Var col
-LD 2 27 ; Var get-map-val
-AP 3 ; Func call get-map-val
-CEQ ; 
-JOIN ; func44 join
-
-LD 1 0 ; Var dir
-LD 2 24 ; Var right
-CEQ ; 
-SEL 238 233 ; Sel on predicate (= dir right )
-JOIN ; func47 join
-
-LD 1 1 ; Var row-start
-LDC 1 ; 
-SUB ; 
-LD 1 2 ; Var col-start
-CONS ; 
-JOIN ; func46 join
-
-LD 1 0 ; Var dir
-LD 2 25 ; Var down
-CEQ ; 
-SEL 148 89 ; Sel on predicate (= dir down )
-JOIN ; func49 join
-
-LD 1 1 ; Var row-start
-LD 1 2 ; Var col-start
+LD 0 0 ; Var row-start
 LDC 1 ; 
 ADD ; 
-CONS ; 
-JOIN ; func48 join
-
-LD 2 1 ; Var true
-JOIN ; func36 join
+LD 0 1 ; Var col-start
+LD 2 27 ; Var make-loc
+AP 2 ; Func call make-loc
+JOIN ; func44 join
 
 LD 2 0 ; Var false
-JOIN ; func35 join
+JOIN ; func47 join
 
-LD 1 1 ; Var row
+LD 0 0 ; Var row-start
+LD 0 1 ; Var col-start
+LDC 1 ; 
+SUB ; 
+LD 2 27 ; Var make-loc
+AP 2 ; Func call make-loc
+JOIN ; func46 join
+
+DUM 0 ; func49_$body$ bindings
+LDF 246 ; Load func49_$body$ body
+RAP 0 ; Call func49_$body$ body
+RTN ; func49 return
+
+LD 1 0 ; Var world-state
+CAR ; 
+RTN ; func49_$body$ return
+
+DUM 2 ; func48_$body$ bindings
+LD 1 1 ; Define row-start
+LD 2 28 ; Var get-loc-row
+AP 1 ; Func call get-loc-row
+LD 1 1 ; Define col-start
+LD 2 29 ; Var get-loc-col
+AP 1 ; Func call get-loc-col
+LDF 259 ; Load func48_$body$ body
+RAP 2 ; Call func48_$body$ body
+RTN ; func48 return
+
+LD 1 0 ; Var dir
+LD 2 23 ; Var up
+CEQ ; 
+SEL 189 182 ; Sel on predicate (= dir up )
+RTN ; func48_$body$ return
+
+DUM 0 ; func36_$body$ bindings
+LDF 268 ; Load func36_$body$ body
+RAP 0 ; Call func36_$body$ body
+RTN ; func36 return
+
+LD 1 1 ; Var loc
+LD 2 28 ; Var get-loc-row
+AP 1 ; Func call get-loc-row
+LDC 0 ; 
+CGTE ; 
+LD 1 1 ; Var loc
+LD 2 28 ; Var get-loc-row
+AP 1 ; Func call get-loc-row
 LD 1 0 ; Var world-map
 LD 2 10 ; Var list-size
 AP 1 ; Func call list-size
+LD 2 2 ; Var <
+AP 2 ; Func call <
+LD 2 6 ; Var and
+AP 2 ; Func call and
+LD 2 29 ; Var get-loc-col
+AP 0 ; Func call get-loc-col
+LDC 0 ; 
 CGTE ; 
-SEL 246 244 ; Sel on predicate (>= row (list-size world-map ) )
-JOIN ; func34 join
+LD 2 29 ; Var get-loc-col
+AP 0 ; Func call get-loc-col
+LD 1 0 ; Var world-map
+LD 2 10 ; Var list-size
+AP 1 ; Func call list-size
+LD 2 2 ; Var <
+AP 2 ; Func call <
+LD 2 6 ; Var and
+AP 2 ; Func call and
+LD 2 6 ; Var and
+AP 2 ; Func call and
+RTN ; func36_$body$ return
 
-LD 2 0 ; Var false
-JOIN ; func33 join
+DUM 0 ; func35_$body$ bindings
+LDF 303 ; Load func35_$body$ body
+RAP 0 ; Call func35_$body$ body
+RTN ; func35 return
+
+LD 1 0 ; Var world-map
+LD 1 1 ; Var loc
+LD 2 28 ; Var get-loc-row
+AP 1 ; Func call get-loc-row
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
+LD 1 1 ; Var loc
+LD 2 29 ; Var get-loc-col
+AP 1 ; Func call get-loc-col
+LD 2 9 ; Var list-ref
+AP 2 ; Func call list-ref
+RTN ; func35_$body$ return
+
+DUM 0 ; func34_$body$ bindings
+LDF 319 ; Load func34_$body$ body
+RAP 0 ; Call func34_$body$ body
+RTN ; func34 return
+
+LD 1 0 ; Var loc
+CDR ; 
+RTN ; func34_$body$ return
+
+DUM 0 ; func33_$body$ bindings
+LDF 326 ; Load func33_$body$ body
+RAP 0 ; Call func33_$body$ body
+RTN ; func33 return
+
+LD 1 0 ; Var loc
+CAR ; 
+RTN ; func33_$body$ return
 
 DUM 0 ; func32_$body$ bindings
-LDF 261 ; Load func32_$body$ body
+LDF 333 ; Load func32_$body$ body
 RAP 0 ; Call func32_$body$ body
 RTN ; func32 return
 
-LD 1 0 ; Var world-map
-LD 1 1 ; Var row
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
-LD 1 2 ; Var col
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
+LD 1 0 ; Var row
+LD 1 1 ; Var col
+CONS ; 
 RTN ; func32_$body$ return
 
 DUM 0 ; func31_$body$ bindings
-LDF 273 ; Load func31_$body$ body
+LDF 341 ; Load func31_$body$ body
 RAP 0 ; Call func31_$body$ body
 RTN ; func31 return
 
 LD 1 1 ; Var l
 LD 2 8 ; Var null?
 AP 1 ; Func call null?
-SEL 530 278 ; Sel on predicate (null? l )
+SEL 546 346 ; Sel on predicate (null? l )
 RTN ; func31_$body$ return
 
 LD 1 1 ; Var l
@@ -343,104 +417,29 @@ AP 2 ; Func call map
 CONS ; 
 JOIN ; func30 join
 
-LD 1 1 ; Var col
+DUM 0 ; func39_$body$ bindings
+LDF 361 ; Load func39_$body$ body
+RAP 0 ; Call func39_$body$ body
+RTN ; func39 return
+
+LD 1 1 ; Var loc
+LD 2 31 ; Var check-loc-in-bounds
+AP 1 ; Func call check-loc-in-bounds
+LD 2 4 ; Var not
+AP 1 ; Func call not
+SEL 375 368 ; Sel on predicate (not (check-loc-in-bounds loc ) )
+RTN ; func39_$body$ return
+
+LD 2 13 ; Var wall
 LD 1 0 ; Var world-map
-CAR ; 
-LD 2 10 ; Var list-size
-AP 1 ; Func call list-size
-CGTE ; 
-SEL 169 165 ; Sel on predicate (>= col (list-size (car world-map ) ) )
-JOIN ; func39 join
-
-DUM 0 ; func73_$body$ bindings
-LDF 301 ; Load func73_$body$ body
-RAP 0 ; Call func73_$body$ body
-RTN ; func73 return
-
-LD 2 23 ; Var up
-LD 2 43 ; Var build-state
-AP 1 ; Func call build-state
-LD 2 45 ; Var step
-CONS ; 
-RTN ; func73_$body$ return
-
-LD 2 0 ; Var false
+LD 1 1 ; Var loc
+LD 2 30 ; Var get-map-val
+AP 2 ; Func call get-map-val
+CEQ ; 
 JOIN ; func38 join
 
-DUM 0 ; func37_$body$ bindings
-LDF 313 ; Load func37_$body$ body
-RAP 0 ; Call func37_$body$ body
-RTN ; func37 return
-
-LD 1 1 ; Var row
-LDC 0 ; 
-LD 2 2 ; Var <
-AP 2 ; Func call <
-SEL 255 248 ; Sel on predicate (< row 0 )
-RTN ; func37_$body$ return
-
-LD 1 0 ; Var state
-LD 0 4 ; Var state-dir
-CONS ; 
-JOIN ; func70 join
-
-DUM 7 ; func72_$body$ bindings
-LD 1 1 ; Define world-map
-LD 2 32 ; Var get-world-map
-AP 1 ; Func call get-world-map
-LD 1 1 ; Define player-row
-LD 2 33 ; Var get-player-status
-AP 1 ; Func call get-player-status
-LD 2 37 ; Var get-player-loc
-AP 1 ; Func call get-player-loc
-LD 1 1 ; Define player-row
-LD 2 33 ; Var get-player-status
-AP 1 ; Func call get-player-status
-LD 2 37 ; Var get-player-loc
-AP 1 ; Func call get-player-loc
-CAR ; 
-LD 1 1 ; Define player-row
-LD 2 33 ; Var get-player-status
-AP 1 ; Func call get-player-status
-LD 2 37 ; Var get-player-loc
-AP 1 ; Func call get-player-loc
-CDR ; 
-LD 1 0 ; Define new-state
-LD 2 44 ; Var get-state-dir
-AP 1 ; Func call get-state-dir
-LD 1 0 ; Define new-state
-LD 2 44 ; Var get-state-dir
-AP 1 ; Func call get-state-dir
-LDC 1 ; 
-ADD ; 
-LD 2 42 ; Var wrap-dir
-AP 1 ; Func call wrap-dir
-LD 1 0 ; Define new-state
-LD 2 44 ; Var get-state-dir
-AP 1 ; Func call get-state-dir
-LDC 1 ; 
-ADD ; 
-LD 2 42 ; Var wrap-dir
-AP 1 ; Func call wrap-dir
-LD 2 43 ; Var build-state
-AP 1 ; Func call build-state
-LDF 366 ; Load func72_$body$ body
-RAP 7 ; Call func72_$body$ body
-RTN ; func72 return
-
-LD 0 0 ; Var world-map
-LD 0 4 ; Var state-dir
-LD 0 3 ; Var player-row
-LD 0 2 ; Var player-col
-LD 2 41 ; Var dir-works
-AP 4 ; Func call dir-works
-SEL 319 374 ; Sel on predicate (dir-works world-map state-dir player-row player-col )
-RTN ; func72_$body$ return
-
-LD 0 6 ; Var new-state
-LD 0 5 ; Var new-dir
-CONS ; 
-JOIN ; func71 join
+LD 2 1 ; Var true
+JOIN ; func37 join
 
 LDC 0 ; 
 JOIN ; func23 join
@@ -449,37 +448,37 @@ LDC 1 ;
 JOIN ; func11 join
 
 DUM 0 ; func22_$body$ bindings
-LDF 386 ; Load func22_$body$ body
+LDF 385 ; Load func22_$body$ body
 RAP 0 ; Call func22_$body$ body
 RTN ; func22 return
 
 LD 1 1 ; Var index
 LDC 0 ; 
 CEQ ; 
-SEL 426 418 ; Sel on predicate (= index 0 )
+SEL 425 417 ; Sel on predicate (= index 0 )
 RTN ; func22_$body$ return
 
 LDC 0 ; 
 JOIN ; func12 join
 
 DUM 0 ; func13_$body$ bindings
-LDF 397 ; Load func13_$body$ body
+LDF 396 ; Load func13_$body$ body
 RAP 0 ; Call func13_$body$ body
 RTN ; func13 return
 
 LD 1 0 ; Var cond1
-SEL 187 429 ; Sel on predicate cond1
+SEL 212 428 ; Sel on predicate cond1
 RTN ; func13_$body$ return
 
 DUM 0 ; func25_$body$ bindings
-LDF 404 ; Load func25_$body$ body
+LDF 403 ; Load func25_$body$ body
 RAP 0 ; Call func25_$body$ body
 RTN ; func25 return
 
 LD 1 0 ; Var l
 LD 2 8 ; Var null?
 AP 1 ; Func call null?
-SEL 378 411 ; Sel on predicate (null? l )
+SEL 377 410 ; Sel on predicate (null? l )
 RTN ; func25_$body$ return
 
 LDC 0 ; 
@@ -507,14 +506,16 @@ CAR ;
 JOIN ; func20 join
 
 LD 1 1 ; Var cond2
-SEL 380 391 ; Sel on predicate cond2
+SEL 379 390 ; Sel on predicate cond2
 JOIN ; func10 join
 
-LD 1 0 ; Var maybe-dir
+LD 1 0 ; Var state
+LD 0 2 ; Var state-dir
+CONS ; 
 JOIN ; func66 join
 
 DUM 0 ; func19_$body$ bindings
-LDF 438 ; Load func19_$body$ body
+LDF 439 ; Load func19_$body$ body
 RAP 0 ; Call func19_$body$ body
 RTN ; func19 return
 
@@ -522,51 +523,85 @@ LD 1 0 ; Var l
 ATOM ; 
 RTN ; func19_$body$ return
 
-DUM 0 ; func67_$body$ bindings
-LDF 445 ; Load func67_$body$ body
-RAP 0 ; Call func67_$body$ body
-RTN ; func67 return
+LD 0 4 ; Var new-state
+LD 0 3 ; Var new-dir
+CONS ; 
+JOIN ; func67 join
 
-LD 1 0 ; Var maybe-dir
-LDC 3 ; 
-CGT ; 
-SEL 532 432 ; Sel on predicate (> maybe-dir 3 )
-RTN ; func67_$body$ return
-
-DUM 0 ; func68_$body$ bindings
-LDF 454 ; Load func68_$body$ body
-RAP 0 ; Call func68_$body$ body
+DUM 5 ; func68_$body$ bindings
+LD 1 1 ; Define world-map
+LD 2 34 ; Var get-world-map
+AP 1 ; Func call get-world-map
+LD 1 1 ; Define player-loc
+LD 2 35 ; Var get-player-status
+AP 1 ; Func call get-player-status
+LD 2 39 ; Var get-player-loc
+AP 1 ; Func call get-player-loc
+LD 1 0 ; Define new-state
+LD 2 48 ; Var get-state-dir
+AP 1 ; Func call get-state-dir
+LD 1 0 ; Define new-state
+LD 2 48 ; Var get-state-dir
+AP 1 ; Func call get-state-dir
+LDC 1 ; 
+ADD ; 
+LD 2 44 ; Var wrap-dir
+AP 1 ; Func call wrap-dir
+LD 1 0 ; Define new-state
+LD 2 48 ; Var get-state-dir
+AP 1 ; Func call get-state-dir
+LDC 1 ; 
+ADD ; 
+LD 2 44 ; Var wrap-dir
+AP 1 ; Func call wrap-dir
+LD 2 47 ; Var build-state
+AP 1 ; Func call build-state
+LDF 477 ; Load func68_$body$ body
+RAP 5 ; Call func68_$body$ body
 RTN ; func68 return
 
-LD 1 0 ; Var dir
-LDC 0 ; 
-CONS ; 
+LD 0 0 ; Var world-map
+LD 0 2 ; Var state-dir
+LD 0 1 ; Var player-loc
+LD 2 43 ; Var dir-works
+AP 3 ; Func call dir-works
+SEL 431 442 ; Sel on predicate (dir-works world-map state-dir player-loc )
 RTN ; func68_$body$ return
 
 DUM 0 ; func69_$body$ bindings
-LDF 462 ; Load func69_$body$ body
+LDF 488 ; Load func69_$body$ body
 RAP 0 ; Call func69_$body$ body
 RTN ; func69 return
 
-LD 1 0 ; Var state
-CAR ; 
+LD 2 23 ; Var up
+LD 2 47 ; Var build-state
+AP 1 ; Func call build-state
+LD 2 49 ; Var step
+CONS ; 
 RTN ; func69_$body$ return
 
-DUM 0 ; func62_$body$ bindings
-LDF 469 ; Load func62_$body$ body
-RAP 0 ; Call func62_$body$ body
+DUM 1 ; func62_$body$ bindings
+LD 1 0 ; Define diff
+LD 1 1 ; Var dir2
+SUB ; 
+LDF 501 ; Load func62_$body$ body
+RAP 1 ; Call func62_$body$ body
 RTN ; func62 return
 
-LD 1 0 ; Var player-status
-LDC 3 ; 
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
+LD 0 0 ; Var diff
+LDC 2 ; 
+CEQ ; 
+LD 0 0 ; Var diff
+LDC -2 ; 
+CEQ ; 
+LD 2 5 ; Var or
+AP 2 ; Func call or
 RTN ; func62_$body$ return
 
 LD 1 1 ; Var cond2
 LD 2 4 ; Var not
 AP 1 ; Func call not
-SEL 495 528 ; Sel on predicate (not cond2 )
+SEL 532 544 ; Sel on predicate (not cond2 )
 JOIN ; func15 join
 
 LDC 1 ; 
@@ -578,14 +613,15 @@ ADD ;
 JOIN ; func27 join
 
 DUM 0 ; func63_$body$ bindings
-LDF 490 ; Load func63_$body$ body
+LDF 526 ; Load func63_$body$ body
 RAP 0 ; Call func63_$body$ body
 RTN ; func63 return
 
-LD 1 0 ; Var player-status
-LDC 4 ; 
-LD 2 9 ; Var list-ref
-AP 2 ; Func call list-ref
+LD 1 0 ; Var dir
+LDC 2 ; 
+ADD ; 
+LD 2 44 ; Var wrap-dir
+AP 1 ; Func call wrap-dir
 RTN ; func63_$body$ return
 
 LDC 0 ; 
@@ -594,35 +630,14 @@ JOIN ; func16 join
 LDC 2 ; 
 JOIN ; func26 join
 
-DUM 3 ; func64_$body$ bindings
-LD 1 1 ; Define player-next-col
-LD 1 2 ; Var row
-LD 1 3 ; Var col
-LD 2 31 ; Var get-dir-coords
-AP 3 ; Func call get-dir-coords
-LD 1 1 ; Define player-next-col
-LD 1 2 ; Var row
-LD 1 3 ; Var col
-LD 2 31 ; Var get-dir-coords
-AP 3 ; Func call get-dir-coords
-CAR ; 
-LD 1 1 ; Define player-next-col
-LD 1 2 ; Var row
-LD 1 3 ; Var col
-LD 2 31 ; Var get-dir-coords
-AP 3 ; Func call get-dir-coords
-CDR ; 
-LDF 520 ; Load func64_$body$ body
-RAP 3 ; Call func64_$body$ body
+DUM 0 ; func64_$body$ bindings
+LDF 540 ; Load func64_$body$ body
+RAP 0 ; Call func64_$body$ body
 RTN ; func64 return
 
-LD 1 0 ; Var world-map
-LD 0 1 ; Var player-next-row
-LD 0 2 ; Var player-next-col
-LD 2 30 ; Var is-wall
-AP 3 ; Func call is-wall
-LD 2 4 ; Var not
-AP 1 ; Func call not
+LD 1 0 ; Var dir
+LDC 0 ; 
+CONS ; 
 RTN ; func64_$body$ return
 
 LDC 1 ; 
@@ -631,30 +646,34 @@ JOIN ; func17 join
 LD 2 7 ; Var nil
 JOIN ; func29 join
 
-LD 1 0 ; Var maybe-dir
-LDC 4 ; 
-SUB ; 
-JOIN ; func65 join
+DUM 0 ; func65_$body$ bindings
+LDF 552 ; Load func65_$body$ body
+RAP 0 ; Call func65_$body$ body
+RTN ; func65 return
+
+LD 1 0 ; Var state
+CAR ; 
+RTN ; func65_$body$ return
 
 DUM 0 ; func18_$body$ bindings
-LDF 540 ; Load func18_$body$ body
+LDF 559 ; Load func18_$body$ body
 RAP 0 ; Call func18_$body$ body
 RTN ; func18 return
 
 LD 1 0 ; Var cond1
 LD 2 4 ; Var not
 AP 1 ; Func call not
-SEL 409 474 ; Sel on predicate (not cond1 )
+SEL 408 510 ; Sel on predicate (not cond1 )
 RTN ; func18_$body$ return
 
 DUM 0 ; func28_$body$ bindings
-LDF 549 ; Load func28_$body$ body
+LDF 568 ; Load func28_$body$ body
 RAP 0 ; Call func28_$body$ body
 RTN ; func28 return
 
 LD 1 0 ; Var t
 CDR ; 
 ATOM ; 
-SEL 497 479 ; Sel on predicate (atom (cdr t ) )
+SEL 534 515 ; Sel on predicate (atom (cdr t ) )
 RTN ; func28_$body$ return
 
