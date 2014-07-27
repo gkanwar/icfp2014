@@ -1,0 +1,13 @@
+DUM 0 ; main_$body$ bindings
+LDF 4 ; Load main_$body$ body
+RAP 0 ; Call main_$body$ body
+RTN ; main return
+
+LDC 1 ; 
+DBUG ; 
+LDC 2 ; 
+DBUG ; 
+LDC 55 ; 
+DBUG ; 
+RTN ; main_$body$ return
+

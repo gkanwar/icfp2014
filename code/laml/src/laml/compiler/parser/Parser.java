@@ -132,6 +132,11 @@ public class Parser {
                             "CDR", 1,
                             functionNode, env, globalFuncMap, headerCode).code);
                 }
+                else if (op.token.equals("dbug")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "DBUG", 1,
+                            functionNode, env, globalFuncMap, headerCode).code);
+                }
                 else if (op.token.equals("begin")) {
                     for (LexerNode child : functionNode.children) {
                         CodeSequence childCode = parseNode(child, env,
