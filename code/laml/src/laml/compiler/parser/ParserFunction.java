@@ -30,11 +30,12 @@ public class ParserFunction implements ParserLabeledBlock {
         LabeledFunction bodyFunc = new LabeledFunction(bodyLabel);
 
         // Header
-        entryFunc.addCodeSequence(env.buildEnvFrame(name, bodyLabel));
+        entryFunc.addCodeSequence(env.buildEnvHeader(name, bodyLabel));
         entryFunc.addLine(Line.makeRtn(name + " return"));
         out.add(entryFunc);
 
         // Body
+        bodyFunc.addCodeSequence(env.buildEnvDefinitions(name, bodyLabel));
         bodyFunc.addCodeSequence(body);
         bodyFunc.addLine(Line.makeRtn(bodyLabel + " return"));
         out.add(bodyFunc);

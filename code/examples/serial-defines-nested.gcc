@@ -1,19 +1,21 @@
-DUM 2 ; main_$body$ bindings
-LDF 11 ; Define plus-one
-LDF 19 ; Define func
-LDF 6 ; Load main_$body$ body
-RAP 2 ; Call main_$body$ body
+LDC 0 ; Symbol plus-one init for main
+LDC 0 ; Symbol func init for main
+LDF 5 ; Load main_$body$
+AP 2 ; Call main_$body$
 RTN ; main return
 
+LDF 14 ; Define plus-one
+ST 0 0 ; End define plus-one
+LDF 21 ; Define func
+ST 0 1 ; End define func
 LDC 10 ; 
 LDC 5 ; 
 LD 0 1 ; Var func
 AP 2 ; Func call func
 RTN ; main_$body$ return
 
-DUM 0 ; func0_$body$ bindings
-LDF 15 ; Load func0_$body$ body
-RAP 0 ; Call func0_$body$ body
+LDF 17 ; Load func0_$body$
+AP 0 ; Call func0_$body$
 RTN ; func0 return
 
 LD 1 0 ; Var x
@@ -21,14 +23,15 @@ LDC 1 ;
 ADD ; 
 RTN ; func0_$body$ return
 
-DUM 1 ; func1_$body$ bindings
+LDC 0 ; Symbol inc init for func1
+LDF 25 ; Load func1_$body$
+AP 1 ; Call func1_$body$
+RTN ; func1 return
+
 LD 1 0 ; Define inc
 LD 2 0 ; Var plus-one
 AP 1 ; Func call plus-one
-LDF 26 ; Load func1_$body$ body
-RAP 1 ; Call func1_$body$ body
-RTN ; func1 return
-
+ST 0 0 ; End define inc
 LD 0 0 ; Var inc
 LD 1 1 ; Var b
 MUL ; 

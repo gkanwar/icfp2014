@@ -1,0 +1,11 @@
+;;;; -*- mode: scheme -*-
+;;;; Tests creating a closure inside a serial define
+(define test-func
+  (lambda (l)
+    (begin
+      (define first (car l))
+      (lambda (n)
+        (lambda (k)
+          (* k (* n first)))))))
+;; Should return 350
+(((test-func (list 5 6)) 7) 10)

@@ -1,10 +1,13 @@
-DUM 2 ; main_$body$ bindings
-LDC 1 ; Define b
-LDC 1 ; Define b
-LDF 6 ; Load main_$body$ body
-RAP 2 ; Call main_$body$ body
+LDC 0 ; Symbol a init for main
+LDC 0 ; Symbol b init for main
+LDF 5 ; Load main_$body$
+AP 2 ; Call main_$body$
 RTN ; main return
 
+LDC 1 ; Define a
+ST 0 0 ; End define a
+LD 0 0 ; Define b
+ST 0 1 ; End define b
 LD 0 1 ; Var b
 RTN ; main_$body$ return
 

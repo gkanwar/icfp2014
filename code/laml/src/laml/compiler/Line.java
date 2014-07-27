@@ -129,6 +129,14 @@ public class Line {
                 comment);
     }
 
+    public static Line makeSt(int depth, int index, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "ST"),
+                new Token(TokenType.CONST, depth),
+                new Token(TokenType.CONST, index)),
+                comment);
+    }
+
     public static Line makeAp(int numBindings, String comment) {
         return new Line(Arrays.asList(
                 new Token(TokenType.OP, "AP"),

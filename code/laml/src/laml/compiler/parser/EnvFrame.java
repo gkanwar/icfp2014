@@ -131,19 +131,40 @@ public class EnvFrame {
     }
 
     /**
-     * Compile the environment frame code header for a labeled function.
+     * Compile the environment frame header for a labeled function. Initializes
+     * an environment frame with all 0s for each symbol for now, then calls into
+     * the body. The body should be started by a definition for each symbol.
      * 
-     * @param headerLabel Label of the header which we're building
-     * @param bodyLabel Label of the body to call into from the header.
+     * @param headerLabel Label of the header for which we're definition
+     *            symbols.
+     * @param bodyLabel label of the body function to call into once done.
      */
-    public CodeSequence buildEnvFrame(String headerLabel, String bodyLabel) {
+    public CodeSequence buildEnvHeader(String headerLabel, String bodyLabel) {
         CodeSequence c = new CodeSequence();
-        c.code.add(Line.makeDum(bindings.size(), headerLabel + " bindings"));
+        // Load an initial 0 for each symbol
         for (Binding binding : bindings) {
-            c.code.addAll(binding.definition.code);
+            c.code.add(Line.makeLdc(0, "Symbol " + binding.name +
+                    " init for " + headerLabel));
         }
         c.code.add(Line.makeLdf(bodyLabel, "Load " + bodyLabel));
-        c.code.add(Line.makeRap(bindings.size(), "Call " + bodyLabel));
+        c.code.add(Line.makeAp(bindings.size(), "Call " + bodyLabel));
+        return c;
+    }
+
+    /**
+     * Compile the environment frame definitions for a labeled function. This
+     * should be the first code in the body of a labeled function.
+     * 
+     * @param name Label of the overall function.
+     */
+    public CodeSequence buildEnvDefinitions(String headerLabel, String bodyLabel) {
+        CodeSequence c = new CodeSequence();
+        for (Binding binding : bindings) {
+            c.code.addAll(binding.definition.code);
+            // Store the definition into the binding index
+            c.code.add(Line.makeSt(0, binding.index,
+                    "End define " + binding.name));
+        }
         return c;
     }
 }

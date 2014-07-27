@@ -1,17 +1,17 @@
-DUM 1 ; main_$body$ bindings
-LDF 9 ; Define fib
-LDF 5 ; Load main_$body$ body
-RAP 1 ; Call main_$body$ body
+LDC 0 ; Symbol fib init for main
+LDF 4 ; Load main_$body$
+AP 1 ; Call main_$body$
 RTN ; main return
 
+LDF 10 ; Define fib
+ST 0 0 ; End define fib
 LDC 10 ; 
 LD 0 0 ; Var fib
 AP 1 ; Func call fib
 RTN ; main_$body$ return
 
-DUM 0 ; func4_$body$ bindings
-LDF 13 ; Load func4_$body$ body
-RAP 0 ; Call func4_$body$ body
+LDF 13 ; Load func4_$body$
+AP 0 ; Call func4_$body$
 RTN ; func4 return
 
 LD 1 0 ; Var n
