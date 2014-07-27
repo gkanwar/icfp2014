@@ -120,4 +120,17 @@ public class Line {
                 new Token(TokenType.CONST, numBindings)),
                 comment);
     }
+
+    public static Line makeNil(String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "LDC"),
+                new Token(TokenType.CONST, 0)),
+                comment);
+    }
+
+    public static Line makeCons(String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "CONS")),
+                comment);
+    }
 }

@@ -232,6 +232,28 @@ public class Parser {
                             new Token(TokenType.LABEL, uniqueName)),
                             ""));
                 }
+                else if (op.token.equals("list")) {
+                    // First push all children
+                    for (LexerNode child : functionNode.children) {
+                        c.code.addAll(parseNode(child, env, globalFuncMap).code);
+                    }
+                    // Then push NIL
+                    c.code.add(Line.makeNil(""));
+                    // Then execute CONS once for each child
+                    for (int i = 0; i < functionNode.children.size(); ++i) {
+                        c.code.add(Line.makeCons(""));
+                    }
+                }
+                else if (op.token.equals("tuple")) {
+                    // First push all children
+                    for (LexerNode child : functionNode.children) {
+                        c.code.addAll(parseNode(child, env, globalFuncMap).code);
+                    }
+                    // Then execute CONS once for each child - 1
+                    for (int i = 0; i < functionNode.children.size() - 1; ++i) {
+                        c.code.add(Line.makeCons(""));
+                    }
+                }
                 else {
                     // TODO(gkanwar): This is identical to the function op case,
                     // perhaps abstract this code...
