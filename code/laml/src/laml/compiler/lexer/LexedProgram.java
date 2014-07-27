@@ -21,15 +21,29 @@ public class LexedProgram {
     }
 
     /**
-     * Read characters from the input until a non-whitespace. The non-whitespace
-     * character is pushed back on the stream, so only whitespace characters are
-     * removed.
+     * Read characters from the input until non-whitespace and non-comment. The
+     * non-whitespace character is pushed back on the stream, so only whitespace
+     * and comment characters are removed.
+     * 
+     * Comments are started by a ';' character, and ended by a '\n' character.
      */
-    public static void eatWhitespace(PushbackInputStream is) {
+    public static void eatWhitespaceAndComments(PushbackInputStream is) {
         try {
+            boolean commentMode = false;
             while (true) {
                 char next = (char) is.read();
-                if (!Character.isWhitespace(next)) {
+                if (commentMode) {
+                    if (next == '\n') {
+                        commentMode = false;
+                    }
+                    continue;
+                }
+                else if (next == ';') {
+                    commentMode = true;
+                    continue;
+                }
+                // Not a comment char
+                else if (!Character.isWhitespace(next)) {
                     is.unread(next);
                     return;
                 }
@@ -132,11 +146,11 @@ public class LexedProgram {
                 return new LexerNode(NodeType.VARIABLE, var);
             } else {
                 // FUNCTION
-                eatWhitespace(is);
+                eatWhitespaceAndComments(is);
                 LexerNode op = lexNode(is);
                 LexerNode node = new LexerNode(NodeType.FUNCTION, op);
                 while (!isStreamDone(is)) {
-                    eatWhitespace(is);
+                    eatWhitespaceAndComments(is);
                     if (tryEatNodeEnd(is)) {
                         break;
                     }
@@ -166,7 +180,7 @@ public class LexedProgram {
 
         PushbackInputStream is = new PushbackInputStream(progIn);
         while (!isStreamDone(is)) {
-            eatWhitespace(is);
+            eatWhitespaceAndComments(is);
             if (isStreamDone(is)) {
                 break;
             }

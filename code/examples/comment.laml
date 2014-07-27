@@ -1,0 +1,5 @@
+; Test comments!
+(define ; Comments in functions, what? They work!
+  x 5)
+; Comments, comments everywhere!
+x
