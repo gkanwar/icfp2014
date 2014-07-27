@@ -20,7 +20,8 @@ public class Parser {
             int numArgs, LexerNode functionNode, EnvFrame env,
             Map<String, ParserLabeledBlock> globalFuncMap, boolean headerCode) {
         if (functionNode.children.size() != numArgs) {
-            throw new RuntimeException("+ takes " + numArgs + " arguments");
+            throw new ParserException(
+                    "Op takes " + numArgs + " arguments", functionNode);
         }
         CodeSequence out = new CodeSequence();
         for (LexerNode child : functionNode.children) {
@@ -184,8 +185,9 @@ public class Parser {
                 }
                 else if (op.token.equals("define")) {
                     if (functionNode.children.size() != 2) {
-                        throw new RuntimeException(
-                                "define takes two arguments: the binding and definition");
+                        throw new ParserException(
+                                "define takes two arguments: the binding and definition",
+                                functionNode);
                     }
                     LexerNode binding = functionNode.children.get(0);
                     if (binding.type != NodeType.VARIABLE) {
@@ -193,8 +195,9 @@ public class Parser {
                         // (define (x) (+ x 1)) yet.
                         // Need to do:
                         // (define x (lambda (x) (+ x 1))).
-                        throw new RuntimeException(
-                                "define doesn't support argument-style binding shortcuts yet");
+                        throw new ParserException(
+                                "define doesn't support argument-style binding shortcuts yet",
+                                functionNode);
                     }
                     // TODO(gkanwar): Add typing, this just assumes everything
                     // is an int for now, and never bothers to check
@@ -215,8 +218,9 @@ public class Parser {
                 }
                 else if (op.token.equals("lambda")) {
                     if (functionNode.children.size() != 2) {
-                        throw new RuntimeException(
-                                "lambda takes two arguments: the binding and definition");
+                        throw new ParserException(
+                                "lambda takes two arguments: the binding and definition",
+                                functionNode);
                     }
                     // Environment to hold argument bindings
                     EnvFrame argEnv = new EnvFrame(env);
@@ -227,16 +231,18 @@ public class Parser {
                     // but we're just faking some post-processing here instead.
                     LexerNode bindingNode = functionNode.children.get(0);
                     if (bindingNode.type != NodeType.FUNCTION) {
-                        throw new RuntimeException(
-                                "lambda first arg must be a list of bindings");
+                        throw new ParserException(
+                                "lambda first arg must be a list of bindings",
+                                functionNode);
                     }
                     // First binding pulled from op, the rest from children
                     // No bindings have code definitions -- as arguments it's
                     // the
                     // caller's responsibility to define these.
                     if (bindingNode.op.type != NodeType.VARIABLE) {
-                        throw new RuntimeException(
-                                "lambda bindings must all be var type");
+                        throw new ParserException(
+                                "lambda bindings must all be var type",
+                                functionNode);
                     }
                     // HACK: Allow declaring a thunk using (lambda (THUNK) def)
                     if (bindingNode.op.token != "THUNK") {
@@ -245,8 +251,9 @@ public class Parser {
                     }
                     for (LexerNode bindingChild : bindingNode.children) {
                         if (bindingChild.type != NodeType.VARIABLE) {
-                            throw new RuntimeException(
-                                    "lambda bindings must all be var type");
+                            throw new ParserException(
+                                    "lambda bindings must all be var type",
+                                    functionNode);
                         }
                         argEnv.addBinding(bindingChild.token, new Binding(
                                 bindingChild.token, ParserDataType.INTEGER));

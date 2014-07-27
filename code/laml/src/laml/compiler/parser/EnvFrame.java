@@ -133,16 +133,17 @@ public class EnvFrame {
     /**
      * Compile the environment frame code header for a labeled function.
      * 
-     * @param label Label of the body to call into from the header.
+     * @param headerLabel Label of the header which we're building
+     * @param bodyLabel Label of the body to call into from the header.
      */
-    public CodeSequence buildEnvFrame(String label) {
+    public CodeSequence buildEnvFrame(String headerLabel, String bodyLabel) {
         CodeSequence c = new CodeSequence();
-        c.code.add(Line.makeDum(bindings.size(), label + " bindings"));
+        c.code.add(Line.makeDum(bindings.size(), headerLabel + " bindings"));
         for (Binding binding : bindings) {
             c.code.addAll(binding.definition.code);
         }
-        c.code.add(Line.makeLdf(label, "Load " + label + " body"));
-        c.code.add(Line.makeRap(bindings.size(), "Call " + label + " body"));
+        c.code.add(Line.makeLdf(bodyLabel, "Load " + bodyLabel));
+        c.code.add(Line.makeRap(bindings.size(), "Call " + bodyLabel));
         return c;
     }
 }

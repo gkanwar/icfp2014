@@ -1,0 +1,38 @@
+DUM 1 ; main bindings
+LDF 24 ; Define car-or-nil
+LDF 5 ; Load main_$body$
+RAP 1 ; Call main_$body$
+RTN ; main return
+
+LDC 3 ; 
+LDC 2 ; 
+LDC 1 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+LD 0 0 ; Var car-or-nil
+AP 1 ; Func call car-or-nil
+LDC 0 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+RTN ; main_$body$ return
+
+LDC 0 ; 
+JOIN ; func0 join
+
+LD 1 0 ; Var l
+CAR ; 
+JOIN ; func1 join
+
+DUM 0 ; func2 bindings
+LDF 28 ; Load func2_$body$
+RAP 0 ; Call func2_$body$
+RTN ; func2 return
+
+LD 1 0 ; Var l
+ATOM ; 
+SEL 19 21 ; Sel on predicate (atom l )
+RTN ; func2_$body$ return
+

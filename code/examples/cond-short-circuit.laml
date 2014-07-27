@@ -1,0 +1,11 @@
+;;;; -*- mode: scheme -*-
+;;;; Test whether if will appropriately short-circuit and avoid
+;;;; computing the value of the other branch.
+
+(define car-or-nil
+  (lambda (l)
+    (if (atom l)
+        0
+        (car l))))
+;; Should return [3 0]
+(list (car-or-nil (list 3 2 1)) 0)
