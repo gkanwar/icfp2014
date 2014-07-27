@@ -1,0 +1,47 @@
+DUM 1 ; main_$body$ bindings
+LDF 9 ; Define fib
+LDF 5 ; Load main_$body$ body
+RAP 1 ; Call main_$body$ body
+RTN ; main return
+
+LDC 10 ; 
+LD 0 0 ; Var fib
+AP 1 ; Func call fib
+RTN ; main_$body$ return
+
+DUM 0 ; func4_$body$ bindings
+LDF 13 ; Load func4_$body$ body
+RAP 0 ; Call func4_$body$ body
+RTN ; func4 return
+
+LD 1 0 ; Var n
+LDC 0 ; 
+CEQ ; 
+SEL 18 20 ; Sel on predicate (= n 0 )
+RTN ; func4_$body$ return
+
+LDC 1 ; 
+JOIN ; func0 join
+
+LD 1 0 ; Var n
+LDC 1 ; 
+CEQ ; 
+SEL 25 27 ; Sel on predicate (= n 1 )
+JOIN ; func1 join
+
+LDC 1 ; 
+JOIN ; func2 join
+
+LD 1 0 ; Var n
+LDC 1 ; 
+SUB ; 
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+LD 1 0 ; Var n
+LDC 2 ; 
+SUB ; 
+LD 2 0 ; Var fib
+AP 1 ; Func call fib
+ADD ; 
+JOIN ; func3 join
+

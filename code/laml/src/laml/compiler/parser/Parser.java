@@ -140,15 +140,21 @@ public class Parser {
                             functionNode.children.get(0), env, globalFuncMap);
                     c.code.addAll(predicate.code);
                     String trueBranchLabel = getUniqueName(globalFuncMap);
+                    // HACK: Claim this label so an inner branch can't conflict
+                    globalFuncMap.put(trueBranchLabel, null);
                     ParserBranch trueBranch = new ParserBranch(trueBranchLabel,
                             parseNode(functionNode.children.get(1), env,
                                     globalFuncMap));
+                    // Now replace the labeled block ref with the actual block
                     globalFuncMap.put(trueBranchLabel, trueBranch);
                     String falseBranchLabel = getUniqueName(globalFuncMap);
+                    // HACK: Claim this label so an inner branch can't conflict
+                    globalFuncMap.put(falseBranchLabel, null);
                     ParserBranch falseBranch = new ParserBranch(
                             falseBranchLabel,
                             parseNode(functionNode.children.get(2), env,
                                     globalFuncMap));
+                    // Now replace the labeled block ref with the actual block
                     globalFuncMap.put(falseBranchLabel, falseBranch);
                     c.code.add(Line.makeSel(
                             trueBranchLabel, falseBranchLabel,

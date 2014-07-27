@@ -13,7 +13,6 @@ public class Main {
         LexedProgram lexedProgram = LexedProgram.lexProgram(System.in);
         RelativeProgram parsedProgram = Parser.parseProgram(lexedProgram);
         AbsoluteProgram finalProgram = parsedProgram.translate();
-        System.out.println("\n");
         System.out.println(finalProgram.toString());
     }
 }

@@ -27,9 +27,12 @@ public class LexedProgram {
      */
     public static void eatWhitespace(PushbackInputStream is) {
         try {
-            char next = (char) is.read();
-            if (!Character.isWhitespace(next)) {
-                is.unread(next);
+            while (true) {
+                char next = (char) is.read();
+                if (!Character.isWhitespace(next)) {
+                    is.unread(next);
+                    return;
+                }
             }
         } catch (IOException e) {
             return;

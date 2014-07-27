@@ -26,9 +26,8 @@ public class AbsoluteProgram {
             sb.append(l.toString());
             sb.append("\n");
         }
-        String prog = sb.toString();
-        // Reduce all multi-line newlines to single newlines
-        prog.replaceAll("\\n+", "\n");
+        // Trim and ensure the program ends with a single newline
+        String prog = sb.toString().trim().concat("\n");
         return prog;
     }
 }
