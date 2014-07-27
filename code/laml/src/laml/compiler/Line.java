@@ -99,4 +99,25 @@ public class Line {
                 new Token(TokenType.LABEL, falseBranchLabel)),
                 comment);
     }
+
+    public static Line makeDum(int numBindings, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "DUM"),
+                new Token(TokenType.CONST, numBindings)),
+                comment);
+    }
+
+    public static Line makeLdf(String label, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "LDF"),
+                new Token(TokenType.LABEL, label)),
+                comment);
+    }
+
+    public static Line makeRap(int numBindings, String comment) {
+        return new Line(Arrays.asList(
+                new Token(TokenType.OP, "RAP"),
+                new Token(TokenType.CONST, numBindings)),
+                comment);
+    }
 }

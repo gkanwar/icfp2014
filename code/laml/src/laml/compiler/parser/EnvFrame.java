@@ -1,14 +1,11 @@
 package laml.compiler.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import laml.compiler.Line;
-import laml.compiler.Token;
-import laml.compiler.Token.TokenType;
 
 /**
  * Internal representation of an environment frame in the CPU. Contains a
@@ -32,18 +29,19 @@ public class EnvFrame {
         public final String name;
         public final ParserDataType type;
         // GCC code which should put the desired value on top of the data stack
-        public final CodeSequence definition;
+        public CodeSequence definition;
 
-        public Binding(String name, ParserDataType type, CodeSequence definition) {
+        public Binding(String name, ParserDataType type) {
             this.name = name;
             this.type = type;
+            // Start with an empty definition -- fill this in once the binding
+            // is complete. This allows recursive definitions and also argument
+            // binding for lamdbas. It's a bit of a hack, but not too bad.
+            this.definition = new CodeSequence();
+        }
+
+        public void setDefinition(CodeSequence definition) {
             this.definition = definition;
-            // TODO(gkanwar): Figure out how to distinguish defined vs.
-            // undefined names
-            /*
-             * if (definition.code.size() == 0) { throw new RuntimeException(
-             * "Variable definition cannot be 0 lines."); }
-             */
             if (definition.code.size() > 0) {
                 // Annotate the variable definition
                 definition.code.get(0).setComment("Define " + name);
@@ -127,17 +125,12 @@ public class EnvFrame {
      */
     public CodeSequence buildEnvFrame(String label) {
         CodeSequence c = new CodeSequence();
+        c.code.add(Line.makeDum(bindings.size(), label + " bindings"));
         for (Binding binding : bindings) {
             c.code.addAll(binding.definition.code);
         }
-        c.code.add(new Line(Arrays.asList(
-                new Token(TokenType.OP, "LDF"),
-                new Token(TokenType.LABEL, label)),
-                "Body of func"));
-        c.code.add(new Line(Arrays.asList(
-                new Token(TokenType.OP, "AP"),
-                new Token(TokenType.CONST, bindings.size())),
-                "Call body"));
+        c.code.add(Line.makeLdf(label, "Load " + label + " body"));
+        c.code.add(Line.makeRap(bindings.size(), "Call " + label + " body"));
         return c;
     }
 }

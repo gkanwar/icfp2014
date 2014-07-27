@@ -168,14 +168,14 @@ public class Parser {
                         // (define x (lambda (x) (+ x 1))).
                         throw new RuntimeException(
                                 "define doesn't support argument-style binding shortcuts yet");
-                    }
+                    } // TODO(gkanwar): Add typing, this just assumes everything
+                      // is an int for now, and never bothers to check
+                    Binding envBinding = new Binding(binding.token,
+                            Binding.ParserDataType.INTEGER);
+                    env.addBinding(binding.token, envBinding);
                     CodeSequence definition = parseNode(
                             functionNode.children.get(1), env, globalFuncMap);
-                    // TODO(gkanwar): Add typing, this just assumes everything
-                    // is an int for now, and never bothers to check.
-                    Binding envBinding = new Binding(binding.token,
-                            Binding.ParserDataType.INTEGER, definition);
-                    env.addBinding(binding.token, envBinding);
+                    envBinding.setDefinition(definition);
                     // NOTE(gkanwar): No code added directly here. All
                     // definitions
                     // will be lifted to the beginning of the function call,
@@ -209,16 +209,14 @@ public class Parser {
                                 "lambda bindings must all be var type");
                     }
                     argEnv.addBinding(bindingNode.op.token, new Binding(
-                            bindingNode.op.token, ParserDataType.INTEGER,
-                            new CodeSequence()));
+                            bindingNode.op.token, ParserDataType.INTEGER));
                     for (LexerNode bindingChild : bindingNode.children) {
                         if (bindingChild.type != NodeType.VARIABLE) {
                             throw new RuntimeException(
                                     "lambda bindings must all be var type");
                         }
                         argEnv.addBinding(bindingChild.token, new Binding(
-                                bindingChild.token, ParserDataType.INTEGER,
-                                new CodeSequence()));
+                                bindingChild.token, ParserDataType.INTEGER));
                     }
                     // Wrap argEnv in another env which holds local variable
                     // definitions.
