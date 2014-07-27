@@ -141,6 +141,11 @@ public class Parser {
                             "DBUG", 1,
                             functionNode, env, globalFuncMap, headerCode).code);
                 }
+                else if (op.token.equals("brk")) {
+                    c.code.addAll(parseNArgBuiltIn(
+                            "BRK", 0,
+                            functionNode, env, globalFuncMap, headerCode).code);
+                }
                 else if (op.token.equals("begin")) {
                     for (LexerNode child : functionNode.children) {
                         CodeSequence childCode = parseNode(child, env,
