@@ -87,7 +87,6 @@ public class Parser {
                 // an int for now, and never bothers to check.
                 Binding envBinding = new Binding(binding.token,
                         Binding.ParserDataType.INTEGER, definition);
-                System.out.println("Adding binding for " + binding.token);
                 env.addBinding(binding.token, envBinding);
                 // NOTE(gkanwar): No code added directly here. All definitions
                 // will be lifted to the beginning of the function call, where
@@ -99,7 +98,8 @@ public class Parser {
                     throw new RuntimeException(
                             "lambda takes two arguments: the binding and definition");
                 }
-                EnvFrame newEnv = new EnvFrame(env);
+                // Environment to hold argument bindings
+                EnvFrame argEnv = new EnvFrame(env);
                 // Hack to check for list of bindings; they are interpreted by
                 // the lexer as a function call, because really they would be,
                 // but we're just faking some post-processing here instead.
@@ -111,7 +111,7 @@ public class Parser {
                 // First binding pulled from token, the rest from children
                 // No bindings have code definitions -- as arguments it's the
                 // caller's responsibility to define these.
-                newEnv.addBinding(bindingNode.token, new Binding(
+                argEnv.addBinding(bindingNode.token, new Binding(
                         bindingNode.token, ParserDataType.INTEGER,
                         new CodeSequence()));
                 for (LexerNode bindingChild : bindingNode.children) {
@@ -119,19 +119,45 @@ public class Parser {
                         throw new RuntimeException(
                                 "lambda bindings must all be var type");
                     }
-                    newEnv.addBinding(bindingChild.token, new Binding(
+                    argEnv.addBinding(bindingChild.token, new Binding(
                             bindingChild.token, ParserDataType.INTEGER,
                             new CodeSequence()));
                 }
+                // Wrap argEnv in another env which holds local variable
+                // definitions.
+                EnvFrame funcEnv = new EnvFrame(argEnv);
                 CodeSequence definition = parseNode(
-                        functionNode.children.get(1), newEnv, globalFuncMap);
+                        functionNode.children.get(1), funcEnv, globalFuncMap);
                 String uniqueName = getUniqueName(globalFuncMap);
                 globalFuncMap.put(uniqueName, new ParserFunction(uniqueName,
-                        newEnv, definition));
+                        funcEnv, definition));
                 c.code.add(new Line(Arrays.asList(
                         new Token(TokenType.OP, "LDF"),
                         new Token(TokenType.LABEL, uniqueName)),
                         ""));
+            }
+            else if (env.bindingMap.containsKey(functionNode.token)) {
+                // User-defined function
+                // TODO(gkanwar): Check that this is actually a function, check
+                // arg numbers
+                for (LexerNode child : functionNode.children) {
+                    CodeSequence definition = parseNode(child, env,
+                            globalFuncMap);
+                    c.code.addAll(definition.code);
+                }
+                String symbol = functionNode.token;
+                c.code.add(new Line(Arrays.asList(
+                        new Token(TokenType.OP, "LD"),
+                        new Token(TokenType.CONST, env
+                                .findBindingDepth(symbol)),
+                        new Token(TokenType.CONST, env
+                                .findBindingIndex(symbol))),
+                        "Load func " + symbol));
+                c.code.add(new Line(Arrays.asList(
+                        new Token(TokenType.OP, "AP"),
+                        new Token(TokenType.CONST,
+                                functionNode.children.size())),
+                        "Func call " + symbol));
             }
             else {
                 throw new RuntimeException("Unknown token: "
