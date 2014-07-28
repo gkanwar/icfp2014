@@ -1,0 +1,7 @@
+;;;; -*- mode: scheme -*-
+;;;; Test dictionary stuff
+
+(define d empty-dict)
+;; Should return a dictionary:
+;; {1: 4, 2: 5, 3: 6}
+(dict-extend d (list 1 2 3) (list 4 5 6))

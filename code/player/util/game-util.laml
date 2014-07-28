@@ -1,4 +1,6 @@
 ;;;; -*- mode: scheme -*-
+
+;; Set some global variables
 (define wall 0)
 (define empty 1)
 (define pill 2)
@@ -17,62 +19,14 @@
 (define left 3)
 (define all-dirs (list up right down left))
 
-;; Locations are defines as a (row, col) tuple
-(define make-loc
-  (lambda (row col)
-    (cons row col)))
-(define get-loc-row
-  (lambda (loc)
-    (car loc)))
-(define get-loc-col
-  (lambda (loc)
-    (cdr loc)))
-(define loc=?
-  (lambda (loc1 loc2)
-    (and (= (get-loc-row loc1)
-            (get-loc-row loc2))
-         (= (get-loc-col loc1)
-            (get-loc-col loc2)))))
-
-;; Doesn't bound check, that should be done externally
-(define get-map-val
-  (lambda (world-map loc)
-    (list-ref
-     (list-ref world-map (get-loc-row loc))
-     (get-loc-col loc))))
-
-(define check-loc-in-bounds
-  (lambda (world-map loc)
-    (and (and (>= (get-loc-row loc) 0)
-              (< (get-loc-row loc) (list-size world-map)))
-         (and (>= (get-loc-col loc) 0)
-              (< (get-loc-col loc) (list-size (car world-map)))))))
-
-(define is-wall
-  (lambda (world-map loc)
-    (if (not (check-loc-in-bounds world-map loc))
-        ;; If out-of-bounds, consider it a wall
-        true
-        (= wall (get-map-val world-map loc)))))
-
-(define get-dir-loc
-  (lambda (dir loc)
-    (begin
-      (define row-start (get-loc-row loc))
-      (define col-start (get-loc-col loc))
-      (if (= dir up)
-          (make-loc (- row-start 1) col-start)
-          (if (= dir right)
-              (make-loc row-start (+ col-start 1))
-              (if (= dir down)
-                  (make-loc (+ row-start 1) col-start)
-                  (if (= dir left)
-                      (make-loc row-start (- col-start 1))
-                      false)))))))
-
 (define get-world-map
   (lambda (world-state)
     (car world-state)))
+
+;; Global world data
+(define world-map (get-world-map WORLD-STATE))
+(define world-y (list-size (get-world-map WORLD-STATE)))
+(define world-x (list-size (car (get-world-map WORLD-STATE))))
 
 (define get-player-status
   (lambda (world-state)
@@ -109,11 +63,72 @@
   (lambda (player-status)
     (list-ref player-status 4)))
 
+;; Locations are defines as a (row, col) tuple
+(define make-loc
+  (lambda (row col)
+    (cons row col)))
+(define get-loc-row
+  (lambda (loc)
+    (car loc)))
+(define get-loc-col
+  (lambda (loc)
+    (cdr loc)))
+(define loc=?
+  (lambda (loc1 loc2)
+    (and (= (get-loc-row loc1)
+            (get-loc-row loc2))
+         (= (get-loc-col loc1)
+            (get-loc-col loc2)))))
+
+(define loc-dict-lookup
+  (lambda (dict key)
+    (if (null? dict)
+        nil
+        (if (loc=? (car (car dict)) key)
+            (cdr (car dict))
+            (loc-dict-lookup (cdr dict) key)))))
+
+;; Doesn't bound check, that should be done externally
+(define get-map-val
+  (lambda (loc)
+    (list-ref
+     (list-ref world-map (get-loc-row loc))
+     (get-loc-col loc))))
+
+(define check-loc-in-bounds
+  (lambda (loc)
+    (and (and (>= (get-loc-row loc) 0)
+              (< (get-loc-row loc) world-y))
+         (and (>= (get-loc-col loc) 0)
+              (< (get-loc-col loc) world-x)))))
+
+(define is-wall
+  (lambda (loc)
+    (if (not (check-loc-in-bounds loc))
+        ;; If out-of-bounds, consider it a wall
+        true
+        (= wall (get-map-val loc)))))
+
+(define get-dir-loc
+  (lambda (dir loc)
+    (begin
+      (define row-start (get-loc-row loc))
+      (define col-start (get-loc-col loc))
+      (if (= dir up)
+          (make-loc (- row-start 1) col-start)
+          (if (= dir right)
+              (make-loc row-start (+ col-start 1))
+              (if (= dir down)
+                  (make-loc (+ row-start 1) col-start)
+                  (if (= dir left)
+                      (make-loc row-start (- col-start 1))
+                      false)))))))
+
 (define dir-works
-  (lambda (world-map dir loc)
+  (lambda (dir loc)
     (begin
       (define player-next-loc (get-dir-loc dir loc))
-      (not (is-wall world-map player-next-loc)))))
+      (not (is-wall player-next-loc)))))
 
 (define wrap-dir
   (lambda (maybe-dir)
@@ -134,6 +149,7 @@
 
 (define find-item-locs
   (lambda (world-map item)
+    ;; Needs an up-to-date world map
     (begin
       ;; Iterate over world map row with index
       (define find-item-indices-in-row

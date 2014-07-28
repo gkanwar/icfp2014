@@ -13,9 +13,9 @@ import laml.compiler.Line;
 public class ParserBranch implements ParserLabeledBlock {
 
     private String name;
-    private CodeSequence body;
+    private ParserDefinition body;
 
-    public ParserBranch(String name, CodeSequence body) {
+    public ParserBranch(String name, ParserDefinition body) {
         this.name = name;
         this.body = body;
     }
@@ -23,7 +23,7 @@ public class ParserBranch implements ParserLabeledBlock {
     @Override
     public List<LabeledFunction> toLabeledFunctions() {
         LabeledFunction f = new LabeledFunction(name);
-        f.addCodeSequence(body);
+        f.addCodeSequence(body.code);
         f.addLine(Line.makeJoin(name + " join"));
         return Arrays.asList(f);
     }

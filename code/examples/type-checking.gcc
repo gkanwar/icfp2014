@@ -1,0 +1,41 @@
+LDC 0 ; Symbol x init for main
+LDF 4 ; Load main_$body$
+AP 1 ; Call main_$body$
+RTN ; main return
+
+LDF 13 ; Define x
+ST 0 0 ; End define x
+LDC 1 ; 
+LDC 2 ; 
+LDC 3 ; 
+LD 0 0 ; Var x
+AP 3 ; Func call x
+AP 0 ; Func call (lambda (THUNK ) (list 1 2 3 ) )
+RTN ; main_$body$ return
+
+LDF 16 ; Load func0_$body$
+AP 0 ; Call func0_$body$
+RTN ; func0 return
+
+LD 1 0 ; Var a
+LD 1 1 ; Var b
+LD 1 2 ; Var c
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+RTN ; func0_$body$ return
+
+LDF 27 ; Load func1_$body$
+AP 0 ; Call func1_$body$
+RTN ; func1 return
+
+LDC 1 ; 
+LDC 2 ; 
+LDC 3 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+RTN ; func1_$body$ return
+
