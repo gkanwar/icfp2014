@@ -59,57 +59,72 @@
           ;; Returns dictionary of dist and dirs from reachable squares.
           ;; use flip-path-dirs to get a path from start to end.
           (begin
+            (define expand-path
+              (lambda (seen-frontier next-path)
+                ;; seen-frontier is a tuple of (seen-dict, new-frontier)
+                (begin
+                  (define prev-loc
+                    (begin
+                      (dbug 450)
+                      (dbug seen-frontier)
+                      (dbug next-path)
+                      (get-path-loc next-path)))
+                  (define prev-dirs (get-path-dirs next-path))
+                  (define valid-dirs
+                    (filter
+                     (lambda (dir)
+                       (begin
+                         (define dir-loc (get-dir-loc dir prev-loc))
+                         ;; Filter out seen
+                         (if (null? (loc-dict-lookup seen-dict dir-loc))
+                             (and (not (is-wall dir-loc))
+                                  ;; null means no previous direction, so any dir is fine
+                                  ;; Need to use sc-or here so that we don't try to evaluate
+                                  ;; the car of a nil list.
+                                  (sc-or (lambda (THUNK)
+                                           (null? prev-dirs))
+                                         (lambda (THUNK)
+                                           (not (opposing-dir? dir (car prev-dirs))))))
+                             false)))
+                     all-dirs))
+                  ;; Extend the frontier and seen dicts
+                  (define new-paths
+                    (map
+                     (lambda (dir)
+                       (extend-path next-path dir))
+                     valid-dirs))
+                  (define new-frontier
+                    (list-extend new-paths (cdr seen-frontier)))
+                  (define new-seen-dict
+                    (dict-extend
+                     (car seen-frontier)
+                     (map
+                      (lambda (path)
+                        (get-path-loc path))
+                      new-paths)
+                     new-paths))
+                  (define out-accum (tuple new-seen-dict new-frontier))
+                  (dbug 451)
+                  (dbug new-seen-dict)
+                  (dbug new-frontier)
+                  (dbug out-accum)
+                  out-accum
+                  )))
+            (define new-seen-frontier
+              (fold-left expand-path (tuple seen-dict nil) frontier))
             (if (null? frontier)
                 (begin
                   ;; Done! We've seen everything
                   (dbug 777)
                   seen-dict)
                 (begin
-                  (define expand-path
-                    (lambda (seen-frontier next-path)
-                      ;; seen-frontier is a tuple of (seen-dict, new-frontier)
-                      (begin
-                        (define prev-loc
-                          (get-path-loc next-path))
-                        (define prev-dirs (get-path-dirs next-path))
-                        (define valid-dirs
-                          (filter
-                           (lambda (dir)
-                             (begin
-                               (define dir-loc (get-dir-loc dir prev-loc))
-                               ;; Filter out seen
-                               (if (null? (dict-lookup seen-dict dir-loc))
-                                   (and (not (is-wall dir-loc))
-                                        ;; null means no previous direction, so any dir is fine
-                                        ;; Need to use sc-or here so that we don't try to evaluate
-                                        ;; the car of a nil list.
-                                        (sc-or (lambda (THUNK)
-                                                 (null? prev-dirs))
-                                               (lambda (THUNK)
-                                                 (not (opposing-dir? dir (car prev-dirs))))))
-                                   false)))
-                           all-dirs))
-                        ;; Extend the frontier and seen dicts
-                        (define new-paths
-                          (map
-                           (lambda (dir)
-                             (extend-path next-path dir))
-                           valid-dirs))
-                        (define new-frontier
-                          (list-extend new-paths (cdr seen-frontier)))
-                        (define new-seen-dict
-                          (dict-extend
-                           (car seen-frontier)
-                           (map
-                            (lambda (path)
-                              (get-path-loc path))
-                            new-paths)))
-                        (tuple new-seen-dict new-frontier))))
-                  (define new-seen-frontier
-                    (fold-left expand-path (tuple seen-dict nil) frontier))
+                  (dbug 409)
+                  (dbug new-seen-frontier)
                   (bfs-helper (car new-seen-frontier) (cdr new-seen-frontier)))))))
       (define seen-dict
-        (bfs-helper empty-dict (list (make-path target nil))))
+        (begin
+          (dbug 400)
+          (bfs-helper empty-dict (list (make-path target nil)))))
       (map
        (lambda (kv-pair)
          (begin
@@ -117,8 +132,3 @@
            (define path (cdr kv-pair))
            (tuple loc (get-opposing-dir (car (get-path-dirs path))))))
        seen-dict))))
-
-;;; Waypoint functions
-(define compute-waypoint-path
-  (lambda (loc waypoint)
-    (get-path-dirs (bfs loc waypoint))))

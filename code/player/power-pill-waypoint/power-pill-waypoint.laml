@@ -30,8 +30,10 @@
     (begin
       (define init-power-pill-locs (find-item-locs world-map power-pill))
       (define init-power-pill-dists
-        (make-dict init-power-pill-locs
-                   (lambda (pill-loc) (bfs pill-loc))))
+        (begin
+          (dbug init-power-pill-locs)
+          (make-dict init-power-pill-locs
+                     (lambda (pill-loc) (bfs pill-loc)))))
       (define step
         (lambda (state world)
           (begin
@@ -39,8 +41,8 @@
             (define cur-waypoint (get-state-waypoint state))
             (define next-waypoint (next-power-pill (get-world-map world) player-loc))
             (define next-dir
-              (dict-lookup
-               (dict-lookup init-power-pill-dists next-waypoint)
+              (loc-dict-lookup
+               (loc-dict-lookup init-power-pill-dists next-waypoint)
                player-loc))
             (cons (build-state next-dir next-waypoint) next-dir))))
       (cons (build-state up nil) step))))

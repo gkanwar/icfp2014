@@ -11,14 +11,18 @@
               (make-dict (cdr keys) generator)))))
 
 ;;; Just search through keys until matching key is found. Return value
-;;; if found, or nil.
+;;; if found, or nil. Dict required to be with int keys!!!
 (define dict-lookup
   (lambda (dict key)
-    (if (null? dict)
-        nil
-        (if (= (car (car dict)) key)
-            (cdr (car dict))
-            (dict-lookup (cdr dict) key)))))
+    (begin
+      (dbug 1000)
+      (dbug dict)
+      (dbug key)
+      (if (null? dict)
+          nil
+          (if (= (car (car dict)) key)
+              (cdr (car dict))
+              (dict-lookup (cdr dict) key))))))
 
 ;;; Add dict value. Doesn't check for duplicates or anything.
 (define dict-add

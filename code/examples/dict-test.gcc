@@ -1,0 +1,349 @@
+LDC 0 ; Symbol nil init for main
+LDC 0 ; Symbol null? init for main
+LDC 0 ; Symbol list-ref init for main
+LDC 0 ; Symbol list-size init for main
+LDC 0 ; Symbol tuple-size init for main
+LDC 0 ; Symbol map init for main
+LDC 0 ; Symbol filter init for main
+LDC 0 ; Symbol fold-left init for main
+LDC 0 ; Symbol list-extend init for main
+LDC 0 ; Symbol make-dict init for main
+LDC 0 ; Symbol dict-lookup init for main
+LDC 0 ; Symbol dict-add init for main
+LDC 0 ; Symbol dict-extend init for main
+LDC 0 ; Symbol empty-dict init for main
+LDC 0 ; Symbol d init for main
+LDF 18 ; Load main_$body$
+AP 15 ; Call main_$body$
+RTN ; main return
+
+LDC 0 ; Define nil
+ST 0 0 ; End define nil
+LDF 113 ; Define null?
+ST 0 1 ; End define null?
+LDF 130 ; Define list-ref
+ST 0 2 ; End define list-ref
+LDF 201 ; Define list-size
+ST 0 3 ; End define list-size
+LDF 215 ; Define tuple-size
+ST 0 4 ; End define tuple-size
+LDF 164 ; Define map
+ST 0 5 ; End define map
+LDF 282 ; Define filter
+ST 0 6 ; End define filter
+LDF 234 ; Define fold-left
+ST 0 7 ; End define fold-left
+LDF 154 ; Define list-extend
+ST 0 8 ; End define list-extend
+LDF 264 ; Define make-dict
+ST 0 9 ; End define make-dict
+LDF 99 ; Define dict-lookup
+ST 0 10 ; End define dict-lookup
+LDF 90 ; Define dict-add
+ST 0 11 ; End define dict-add
+LDF 66 ; Define dict-extend
+ST 0 12 ; End define dict-extend
+LD 0 0 ; Define empty-dict
+ST 0 13 ; End define empty-dict
+LD 0 13 ; Define d
+ST 0 14 ; End define d
+LD 0 14 ; Var d
+LDC 1 ; 
+LDC 2 ; 
+LDC 3 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+LDC 4 ; 
+LDC 5 ; 
+LDC 6 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+LD 0 12 ; Var dict-extend
+AP 3 ; Func call dict-extend
+RTN ; main_$body$ return
+
+LDF 69 ; Load func35_$body$
+AP 0 ; Call func35_$body$
+RTN ; func35 return
+
+LD 1 1 ; Var keys
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 88 74 ; Sel on predicate (null? keys )
+RTN ; func35_$body$ return
+
+LD 1 1 ; Var keys
+CAR ; 
+LD 1 2 ; Var vals
+CAR ; 
+CONS ; 
+LD 1 0 ; Var dict
+LD 1 1 ; Var keys
+CDR ; 
+LD 1 2 ; Var vals
+CDR ; 
+LD 2 12 ; Var dict-extend
+AP 3 ; Func call dict-extend
+CONS ; 
+JOIN ; func34 join
+
+LD 1 0 ; Var dict
+JOIN ; func33 join
+
+LDF 93 ; Load func32_$body$
+AP 0 ; Call func32_$body$
+RTN ; func32 return
+
+LD 1 1 ; Var key
+LD 1 2 ; Var val
+CONS ; 
+LD 1 0 ; Var dict
+CONS ; 
+RTN ; func32_$body$ return
+
+LDF 102 ; Load func31_$body$
+AP 0 ; Call func31_$body$
+RTN ; func31 return
+
+LD 1 0 ; Var dict
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 253 290 ; Sel on predicate (null? dict )
+RTN ; func31_$body$ return
+
+LD 1 0 ; Var dict
+CDR ; 
+LD 1 1 ; Var key
+LD 2 10 ; Var dict-lookup
+AP 2 ; Func call dict-lookup
+JOIN ; func30 join
+
+LDF 116 ; Load func0_$body$
+AP 0 ; Call func0_$body$
+RTN ; func0 return
+
+LD 1 0 ; Var l
+ATOM ; 
+RTN ; func0_$body$ return
+
+LD 1 0 ; Var l
+CDR ; 
+LD 1 1 ; Var index
+LDC 1 ; 
+SUB ; 
+LD 2 2 ; Var list-ref
+AP 2 ; Func call list-ref
+JOIN ; func1 join
+
+LD 1 0 ; Var l
+CAR ; 
+JOIN ; func2 join
+
+LDF 133 ; Load func3_$body$
+AP 0 ; Call func3_$body$
+RTN ; func3 return
+
+LD 1 1 ; Var index
+SEL 119 127 ; Sel on predicate index
+RTN ; func3_$body$ return
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 1 ; Func call func
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 5 ; Var map
+AP 2 ; Func call map
+CONS ; 
+JOIN ; func11 join
+
+LDC 1 ; 
+LD 1 0 ; Var l
+CDR ; 
+LD 2 3 ; Var list-size
+AP 1 ; Func call list-size
+ADD ; 
+JOIN ; func5 join
+
+LDF 157 ; Load func23_$body$
+AP 0 ; Call func23_$body$
+RTN ; func23 return
+
+LD 1 0 ; Var l1
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 230 172 ; Sel on predicate (null? l1 )
+RTN ; func23_$body$ return
+
+LDC 0 ; 
+JOIN ; func4 join
+
+LDF 167 ; Load func12_$body$
+AP 0 ; Call func12_$body$
+RTN ; func12 return
+
+LD 1 1 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 232 136 ; Sel on predicate (null? l )
+RTN ; func12_$body$ return
+
+LD 1 0 ; Var l1
+CAR ; 
+LD 1 0 ; Var l1
+CDR ; 
+LD 1 1 ; Var l2
+LD 2 8 ; Var list-extend
+AP 2 ; Func call list-extend
+CONS ; 
+JOIN ; func22 join
+
+LD 1 0 ; Var keys
+CAR ; 
+LD 1 0 ; Var keys
+CAR ; 
+LD 1 1 ; Var generator
+AP 1 ; Func call generator
+CONS ; 
+LD 1 0 ; Var keys
+CDR ; 
+LD 1 1 ; Var generator
+LD 2 9 ; Var make-dict
+AP 2 ; Func call make-dict
+CONS ; 
+JOIN ; func25 join
+
+LDC 2 ; 
+JOIN ; func7 join
+
+LD 2 0 ; Var nil
+JOIN ; func13 join
+
+LD 2 0 ; Var nil
+JOIN ; func24 join
+
+LDF 204 ; Load func6_$body$
+AP 0 ; Call func6_$body$
+RTN ; func6 return
+
+LD 1 0 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 162 147 ; Sel on predicate (null? l )
+RTN ; func6_$body$ return
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 1 ; Func call func
+SEL 255 272 ; Sel on predicate (func (car l ) )
+JOIN ; func14 join
+
+LDF 218 ; Load func9_$body$
+AP 0 ; Call func9_$body$
+RTN ; func9 return
+
+LD 1 0 ; Var t
+CDR ; 
+ATOM ; 
+SEL 195 223 ; Sel on predicate (atom (cdr t ) )
+RTN ; func9_$body$ return
+
+LDC 1 ; 
+LD 1 0 ; Var t
+CDR ; 
+LD 2 4 ; Var tuple-size
+AP 1 ; Func call tuple-size
+ADD ; 
+JOIN ; func8 join
+
+LD 1 1 ; Var l2
+JOIN ; func21 join
+
+LD 2 0 ; Var nil
+JOIN ; func10 join
+
+LDF 237 ; Load func20_$body$
+AP 0 ; Call func20_$body$
+RTN ; func20 return
+
+LD 1 2 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 297 242 ; Sel on predicate (null? l )
+RTN ; func20_$body$ return
+
+LD 1 0 ; Var func
+LD 1 1 ; Var accum
+LD 1 2 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+AP 2 ; Func call func
+LD 1 2 ; Var l
+CDR ; 
+LD 2 7 ; Var fold-left
+AP 3 ; Func call fold-left
+JOIN ; func19 join
+
+LD 2 0 ; Var nil
+JOIN ; func27 join
+
+LD 1 1 ; Var l
+CAR ; 
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 6 ; Var filter
+AP 2 ; Func call filter
+CONS ; 
+JOIN ; func15 join
+
+LDF 267 ; Load func26_$body$
+AP 0 ; Call func26_$body$
+RTN ; func26 return
+
+LD 1 0 ; Var keys
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 199 181 ; Sel on predicate (null? keys )
+RTN ; func26_$body$ return
+
+LD 1 0 ; Var func
+LD 1 1 ; Var l
+CDR ; 
+LD 2 6 ; Var filter
+AP 2 ; Func call filter
+JOIN ; func16 join
+
+LD 1 0 ; Var dict
+CAR ; 
+CDR ; 
+JOIN ; func29 join
+
+LDF 285 ; Load func17_$body$
+AP 0 ; Call func17_$body$
+RTN ; func17 return
+
+LD 1 1 ; Var l
+LD 2 1 ; Var null?
+AP 1 ; Func call null?
+SEL 197 209 ; Sel on predicate (null? l )
+RTN ; func17_$body$ return
+
+LD 1 0 ; Var dict
+CAR ; 
+CAR ; 
+LD 1 1 ; Var key
+CEQ ; 
+SEL 278 107 ; Sel on predicate (= (car (car dict ) ) key )
+JOIN ; func28 join
+
+LD 1 1 ; Var accum
+JOIN ; func18 join
+

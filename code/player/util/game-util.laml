@@ -80,6 +80,14 @@
          (= (get-loc-col loc1)
             (get-loc-col loc2)))))
 
+(define loc-dict-lookup
+  (lambda (dict key)
+    (if (null? dict)
+        nil
+        (if (loc=? (car (car dict)) key)
+            (cdr (car dict))
+            (loc-dict-lookup (cdr dict) key)))))
+
 ;; Doesn't bound check, that should be done externally
 (define get-map-val
   (lambda (loc)
