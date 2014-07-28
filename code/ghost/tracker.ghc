@@ -1,17 +1,21 @@
 ; Try to pick the direction that goes closest to the pacman
+
+; grab pacman index
 var myInd
 int 3
 mov [myInd],a
 
+
+; grab ghost location
 int 5
 var myX
 var myY
 mov [myX],a
 mov [myY],b
 
+; grab pacman location
 var pacX
 var pacY
-
 int 1
 mov [pacX],a
 mov [pacY],b
@@ -19,12 +23,61 @@ var diffX
 var diffY
 
 mov b,[myX]
-absdiff()
 
+; store check X order in C/D
+jgt greaterX,a,b
+mov c,3
+mov d,1
+mov pc,endTestX
+greaterX:
+mov c,1
+mov d,3
+endTestX:
+
+; calculate the difference in X and Y coordinates
+absdiff()
+mov [diffX],a
+mov a,[pacY]
+mov b,[myY]
+
+; store check Y order in E/F
+jlt greaterY,a,b
+mov e,2
+mov f,0
+mov pc,endTestY
+greaterY:
+mov e,0
+mov f,2
+endTestY:
+
+; check if pacman further away in x or y
+absdiff()
+mov [diffY],a
+mov b,[diffX]
 int 8
-int 0
-hlt
-; IN: reg A/B with numbers, reg C with end jump pos
+jlt ybigger,b,a
+xbigger:
+mv a,c
+movDirIfPossible()
+mv a,e
+movDirIfPossible()
+mv a,f
+movDirIfPossible()
+mv a,d
+movDirIfPossible()
+ybigger:
+mv a,e
+movDirIfPossible()
+mv a,c
+movDirIfPossible()
+mv a,d
+movDirIfPossible()
+mv a,f
+movDirIfPossible()
+
+mv pc,endTick
+
+; IN: reg A/B with numbers, reg H with end jump pos
 ; OUT: reg A with absolute difference
 absdiff:
 jlt absdiffb,a,b
@@ -34,4 +87,51 @@ absdiffb:
 sub b,a
 mov a,b
 absdiffrtn:
-mov pc,c
+mov pc,h
+
+
+
+
+;IN reg A with direction to try
+movDirIfPossible:
+var tempH
+mov [tempH],h
+mov [tempA],a
+getDirMod()
+add a,[myX]
+add b,[myY]
+int 7
+jeq wall,a,0
+var tempA
+mov a,[tempA]
+int 0
+mov pc,endTick
+wall:
+mov pc,[tempH]
+
+;IN reg A with direction
+;OUT reg A/B with X/Y modification vals
+getDirMod:
+jeq upDir,0,a
+jeq rightDir,1,a
+jeq downDir,2,a
+jeq leftDir,3,a
+leftDir:
+mov a,255
+mov b,0
+return
+rightDir:
+mov a,1 
+mov b,0
+return
+upDir:
+mov a,0
+mov b,255
+return
+downDir:
+mov a,0
+mov b,1
+return
+
+endTick:
+hlt

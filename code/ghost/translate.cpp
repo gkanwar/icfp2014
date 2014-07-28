@@ -67,11 +67,15 @@ bool isFunc(const string& toCheck) {
 void pushFunc(string line) {
   int funcEnd = line.find("()");
   string funcName = line.substr(0,funcEnd);
-  string returnLine = "mov c," + to_string(lineNum + 2);
+  string returnLine = "mov h," + to_string(lineNum + 2);
   string jumpLine = "jeq " + funcName + ",0,0";
   lines.push_back(returnLine);
   lines.push_back(jumpLine);
   lineNum+=2;
+}
+
+bool isReturn(const string& toCheck) {
+  return toCheck.find("return") != toCheck.npos;
 }
 
 void createVar(string line) {
@@ -86,6 +90,9 @@ void createVar(string line) {
 }
 int main() {
   while(!cin.eof()) {
+    if (lineNum > 255) {
+      cerr << "Error: too many lines of code";
+    }
     string curLine;
     getline(cin, curLine);
     if ( curLine.back() == ':') {
@@ -98,6 +105,10 @@ int main() {
     }
     else if (isFunc(curLine)) {
       pushFunc(curLine);
+    }
+    else if (isReturn(curLine)) {
+      lines.push_back("mov pc,h");
+      lineNum++;
     }
     else if (!has_only_spaces(curLine)){
       lines.push_back(curLine);
@@ -113,7 +124,8 @@ int main() {
     for ( int j = vars.size(); --j >=0; ) {
       toOutput = myreplace(toOutput, vars.at(j), to_string(varNums.at(j)));
     }
+    toOutput = myreplace(toOutput, "mv","mov");
     cout << toOutput << endl;
-
   }
+  cerr << "currently " << lineNum << " lines of code" << endl;
 }
