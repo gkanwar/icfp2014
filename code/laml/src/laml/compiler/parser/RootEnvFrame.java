@@ -9,7 +9,7 @@ import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 public class RootEnvFrame extends EnvFrame {
     public RootEnvFrame() {
         super();
-        Binding worldMapBinding = new Binding("WORLD-MAP",
+        Binding worldMapBinding = new Binding("WORLD-STATE",
                 ParserDataType.INTEGER);
         Binding ghostCodeBinding = new Binding("GHOST-CODE",
                 ParserDataType.INTEGER);
@@ -17,7 +17,7 @@ public class RootEnvFrame extends EnvFrame {
         ghostCodeBinding.setIndex(1);
         bindings.add(worldMapBinding);
         bindings.add(ghostCodeBinding);
-        bindingMap.put("WORLD-MAP", worldMapBinding);
+        bindingMap.put("WORLD-STATE", worldMapBinding);
         bindingMap.put("GHOST-CODE", ghostCodeBinding);
     }
 
