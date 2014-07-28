@@ -1,28 +1,56 @@
 ; Try to pick the direction that goes closest to the pacman
 
-; grab pacman index
+; grab ghost index
 var myInd
 int 3
-mov [myInd],a
+mov myInd,a
+
+; 1 is left
+; 255 is right
+; 0 is not following
+var wallFollowDir
+
+; store last turns vit info
+var lastTurnVit
+mv lastTurnVit,ghostAlive
+
+;grab ghost vitality and direction
+var ghostDir
+var ghostAlive
+int 6
+mov ghostAlive,a
+mov ghostDir,b
+
+jeq noVitChange,lastTurnVit,ghostAlive
+mv wallFollowDir,0
+noVitChange:
+
+var triedToFollowThisTurn
+
+mov triedToFollowThisTurn,0
+
+
 
 
 ; grab ghost location
+mov a,myInd
 int 5
 var myX
 var myY
-mov [myX],a
-mov [myY],b
+mov myX,a
+mov myY,b
 
 ; grab pacman location
 var pacX
 var pacY
 int 1
-mov [pacX],a
-mov [pacY],b
+mov pacX,a
+mov pacY,b
+
 var diffX
 var diffY
 
-mov b,[myX]
+mov b,myX
 
 ; store check X order in C/D
 jgt greaterX,a,b
@@ -36,9 +64,9 @@ endTestX:
 
 ; calculate the difference in X and Y coordinates
 absdiff()
-mov [diffX],a
-mov a,[pacY]
-mov b,[myY]
+mov diffX,a
+mov a,pacY
+mov b,myY
 
 ; store check Y order in E/F
 jlt greaterY,a,b
@@ -50,32 +78,59 @@ mov e,0
 mov f,2
 endTestY:
 
-; check if pacman further away in x or y
+; check if pacman further away in x or y, then store the target Dir 
 absdiff()
-mov [diffY],a
-mov b,[diffX]
-int 8
+
+mov diffY,a
+mov b,diffX
+jeq frightChanges,ghostAlive,1
+mv pc,mainMovement
+frightChanges:
+mv g,c
+mv c,d
+mv d,g
+mv g,e
+mv e,f
+mv f,g
+mainMovement:
 jlt ybigger,b,a
 xbigger:
+jeq tryYX,ghostDir,d
 mv a,c
 movDirIfPossible()
+tryYX:
+jeq followingSeq,ghostDir,f
 mv a,e
 movDirIfPossible()
-mv a,f
-movDirIfPossible()
-mv a,d
-movDirIfPossible()
+mv pc,followingSeq
+
 ybigger:
+jeq tryXY,ghostDir,f
 mv a,e
 movDirIfPossible()
+tryXY:
+jeq followingSeq,ghostDir,d
 mv a,c
-movDirIfPossible()
-mv a,d
-movDirIfPossible()
-mv a,f
 movDirIfPossible()
 
+followingSeq:
+jeq setFollow,wallFollowDir,0
+tryWallFollow()
+
+setFollow:
+mv a,ghostDir
+add a,1
+fixABounds()
+isWallDir()
+jeq otherDir,a,0
+mov wallFollowDir,1
+mv pc,afterFollowSet
+otherDir:
+mv wallFollowDir,255
+afterFollowSet:
+tryWallFollow()
 mv pc,endTick
+
 
 ; IN: reg A/B with numbers, reg H with end jump pos
 ; OUT: reg A with absolute difference
@@ -95,19 +150,20 @@ mov pc,h
 ;IN reg A with direction to try
 movDirIfPossible:
 var tempH
-mov [tempH],h
-mov [tempA],a
+mov tempH,h
+mov tempA,a
 getDirMod()
-add a,[myX]
-add b,[myY]
+add a,myX
+add b,myY
+
 int 7
 jeq wall,a,0
 var tempA
-mov a,[tempA]
+mov a,tempA
 int 0
 mov pc,endTick
 wall:
-mov pc,[tempH]
+mov pc,tempH
 
 ;IN reg A with direction
 ;OUT reg A/B with X/Y modification vals
@@ -133,5 +189,47 @@ mov a,0
 mov b,1
 return
 
+tryWallFollow:
+mv triedToFollowThisTurn,1
+mov tempH,h
+mov a,ghostDir
+sub a,wallFollowDir
+fixABounds()
+movDirIfPossible()
+add a,wallFollowDir
+fixABounds()
+movDirIfPossible()
+add a,wallFollowDir
+fixABounds()
+movDirIfPossible()
+add a,wallFollowDir
+fixABounds()
+movDirIfPossible()
+
+; IN reg A with a direction to check
+; OUT rg A with 0 if wall, something else otherwise
+isWallDir:
+var tempHE
+mov tempHE,h
+getDirMod()
+add a,myX
+add b,myY
+int 7
+mv pc,tempHE
+
+fixABounds:
+jgt tooBigBound,a,254
+jlt boundsOkay,a,4
+mv a,0
+mv pc,boundsOkay
+tooBigBound:
+mv a,3
+boundsOkay:
+return
+
+
 endTick:
+jeq realEnd,triedToFollowThisTurn,1
+mv wallFollowDir,0
+realEnd:
 hlt

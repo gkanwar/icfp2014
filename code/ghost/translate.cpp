@@ -99,32 +99,40 @@ int main() {
       curLine.resize(curLine.size()-1);
       labels.push_back(curLine);
       labelLines.push_back(lineNum);
+      lines.push_back("; " + curLine);
     }
     else if (isVar(curLine)) {
       createVar(curLine);
     }
     else if (isFunc(curLine)) {
       pushFunc(curLine);
+      lines.push_back("; " + curLine);
     }
     else if (isReturn(curLine)) {
       lines.push_back("mov pc,h");
       lineNum++;
     }
     else if (!has_only_spaces(curLine)){
-      lines.push_back(curLine);
+      lines.push_back(curLine + " ; " + to_string(lineNum));
       lineNum++;
+    }
+    else {
+      lines.push_back(curLine);
     }
   }
   
   for ( int i = 0; i < lines.size(); i++ )  {
     string toOutput = lines.at(i);
-    for ( int j = labels.size(); --j >=0; ) {
-      toOutput = myreplace(toOutput, labels.at(j), to_string(labelLines.at(j)));
+    if (toOutput[0] != ';') {
+      for ( int j = labels.size(); --j >=0; ) {
+	toOutput = myreplace(toOutput, labels.at(j), to_string(labelLines.at(j)));
+      }
+      for ( int j = vars.size(); --j >=0; ) {
+	toOutput = myreplace(toOutput, vars.at(j), "[" + to_string(varNums.at(j)) + "]");
+      }
+      //I keep typing mv for some reason, this is easier than learning not to do that
+      toOutput = myreplace(toOutput, "mv","mov");
     }
-    for ( int j = vars.size(); --j >=0; ) {
-      toOutput = myreplace(toOutput, vars.at(j), to_string(varNums.at(j)));
-    }
-    toOutput = myreplace(toOutput, "mv","mov");
     cout << toOutput << endl;
   }
   cerr << "currently " << lineNum << " lines of code" << endl;
