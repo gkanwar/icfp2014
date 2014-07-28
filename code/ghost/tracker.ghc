@@ -1,0 +1,37 @@
+; Try to pick the direction that goes closest to the pacman
+var myInd
+int 3
+mov [myInd],a
+
+int 5
+var myX
+var myY
+mov [myX],a
+mov [myY],b
+
+var pacX
+var pacY
+
+int 1
+mov [pacX],a
+mov [pacY],b
+var diffX
+var diffY
+
+mov b,[myX]
+absdiff()
+
+int 8
+int 0
+hlt
+; IN: reg A/B with numbers, reg C with end jump pos
+; OUT: reg A with absolute difference
+absdiff:
+jlt absdiffb,a,b
+sub a,b
+mov pc,absdiffrtn
+absdiffb:
+sub b,a
+mov a,b
+absdiffrtn:
+mov pc,c
