@@ -1,0 +1,14 @@
+;;;; -*- mode: scheme -*-
+;;;; Test waypoint and bfs things
+
+(define world-map
+  (list
+   (list 0 0 0 0 0)
+   (list 0 2 2 3 0)
+   (list 0 2 0 2 0)
+   (list 0 2 2 2 0)
+   (list 0 2 0 2 0)
+   (list 0 2 0 2 0)
+   (list 0 5 2 2 0)
+   (list 0 0 0 0 0)))
+(bfs world-map (make-loc 6 1) (make-loc 1 3))

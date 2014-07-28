@@ -42,6 +42,9 @@
 
 (define init
   (lambda (THUNK)
-    (cons (build-state up nil) step)))
+    (begin
+      (dbug WORLD-MAP)
+      (dbug GHOST-CODE)
+      (cons (build-state up nil) step))))
 
 (init)
