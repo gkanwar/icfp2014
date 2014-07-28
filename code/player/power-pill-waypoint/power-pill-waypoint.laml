@@ -25,26 +25,24 @@
           (car power-pills)))))
 
 ;;;; Simple waypoint-based AI. Goes to each power pill in succession.
-(define step
-  (lambda (state world)
-    (begin
-      (define world-map (get-world-map world))
-      (define player-loc (get-player-loc (get-player-status world)))
-      (define cur-waypoint (get-state-waypoint state))
-      (define next-waypoint (next-power-pill world-map player-loc))
-      (define waypoint-path (compute-waypoint-path
-                             world-map player-loc next-waypoint))
-      ;; Waypoint path will be null if we've reached last waypoint
-      (define next-dir (if (null? waypoint-path)
-                           down
-                           (car waypoint-path)))
-      (cons (build-state next-dir next-waypoint) next-dir))))
-
 (define init
   (lambda (THUNK)
     (begin
-      (dbug WORLD-MAP)
-      (dbug GHOST-CODE)
+      (define init-power-pill-locs (find-item-locs world-map power-pill))
+      (define init-power-pill-dists
+        (make-dict init-power-pill-locs
+                   (lambda (pill-loc) (bfs pill-loc))))
+      (define step
+        (lambda (state world)
+          (begin
+            (define player-loc (get-player-loc (get-player-status world)))
+            (define cur-waypoint (get-state-waypoint state))
+            (define next-waypoint (next-power-pill (get-world-map world) player-loc))
+            (define next-dir
+              (dict-lookup
+               (dict-lookup init-power-pill-dists next-waypoint)
+               player-loc))
+            (cons (build-state next-dir next-waypoint) next-dir))))
       (cons (build-state up nil) step))))
 
 (init)

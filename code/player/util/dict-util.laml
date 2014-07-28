@@ -1,0 +1,36 @@
+;;;; -*- mode: scheme -*-
+;;;; Dictionary implementation. Doesn't using hashing, so very inefficient.
+;;;; Format of a dictionary is a list of tuples from key to value.
+
+;;; Make a dictionary from list of keys and function to transform into values.
+(define make-dict
+  (lambda (keys generator)
+    (if (null? keys)
+        nil
+        (cons (tuple (car keys) (generator (car keys)))
+              (make-dict (cdr keys) generator)))))
+
+;;; Just search through keys until matching key is found. Return value
+;;; if found, or nil.
+(define dict-lookup
+  (lambda (dict key)
+    (if (null? dict)
+        nil
+        (if (= (car (car dict)) key)
+            (cdr (car dict))
+            (dict-lookup (cdr dict) key)))))
+
+;;; Add dict value. Doesn't check for duplicates or anything.
+(define dict-add
+  (lambda (dict key val)
+    (cons (tuple key val) dict)))
+
+;;; Extend the dict with a list of keys/vals.
+(define dict-extend
+  (lambda (dict keys vals)
+    (if (null? keys)
+        dict
+        (cons (tuple (car keys) (car vals))
+              (dict-extend dict (cdr keys) (cdr vals))))))
+
+(define empty-dict nil)
