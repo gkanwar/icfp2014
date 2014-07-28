@@ -199,7 +199,11 @@ public class Parser {
                     // is an int for now, and never bothers to check
                     Binding envBinding = new Binding(binding.token,
                             Binding.ParserDataType.INTEGER);
-                    env.addBinding(binding.token, envBinding);
+                    try {
+                        env.addBinding(binding.token, envBinding);
+                    } catch (EnvException e) {
+                        throw new ParserException(e.getMessage(), functionNode);
+                    }
                     // Use header parse mode, so variable resolutions in
                     // innermost env are replaced by data copy.
                     CodeSequence definition = parseNode(
@@ -242,8 +246,15 @@ public class Parser {
                     }
                     // HACK: Allow declaring a thunk using (lambda (THUNK) def)
                     if (bindingNode.op.token != "THUNK") {
-                        argEnv.addBinding(bindingNode.op.token, new Binding(
-                                bindingNode.op.token, ParserDataType.INTEGER));
+                        try {
+                            argEnv.addBinding(bindingNode.op.token,
+                                    new Binding(
+                                            bindingNode.op.token,
+                                            ParserDataType.INTEGER));
+                        } catch (EnvException e) {
+                            throw new ParserException(e.getMessage(),
+                                    functionNode);
+                        }
                     }
                     for (LexerNode bindingChild : bindingNode.children) {
                         if (bindingChild.type != NodeType.VARIABLE) {
@@ -251,8 +262,13 @@ public class Parser {
                                     "lambda bindings must all be var type",
                                     functionNode);
                         }
-                        argEnv.addBinding(bindingChild.token, new Binding(
-                                bindingChild.token, ParserDataType.INTEGER));
+                        try {
+                            argEnv.addBinding(bindingChild.token, new Binding(
+                                    bindingChild.token, ParserDataType.INTEGER));
+                        } catch (EnvException e) {
+                            throw new ParserException(e.getMessage(),
+                                    functionNode);
+                        }
                     }
                     // Wrap argEnv in another env which holds local variable
                     // definitions.
@@ -345,11 +361,12 @@ public class Parser {
      */
     public static RelativeProgram parseProgram(LexedProgram lexProg) {
         RelativeProgram prog = new RelativeProgram();
-        EnvFrame rootEnv = new EnvFrame();
+        EnvFrame rootEnv = new RootEnvFrame();
+        EnvFrame mainEnv = new EnvFrame(rootEnv);
         Map<String, ParserLabeledBlock> globalFuncMap = new HashMap<String, ParserLabeledBlock>();
-        CodeSequence mainCode = parseNode(lexProg.rootNode, rootEnv,
+        CodeSequence mainCode = parseNode(lexProg.rootNode, mainEnv,
                 globalFuncMap);
-        ParserFunction mainFunc = new ParserFunction("main", rootEnv, mainCode);
+        ParserFunction mainFunc = new ParserFunction("main", mainEnv, mainCode);
         prog.addLabeledFunctions(mainFunc.toLabeledFunctions());
         for (ParserLabeledBlock func : globalFuncMap.values()) {
             prog.addLabeledFunctions(func.toLabeledFunctions());

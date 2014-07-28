@@ -89,9 +89,9 @@ public class EnvFrame {
         bindings = new ArrayList<Binding>();
     }
 
-    public void addBinding(String name, Binding binding) {
+    public void addBinding(String name, Binding binding) throws EnvException {
         if (bindingMap.containsKey(name)) {
-            throw new RuntimeException("Cannot redefine symbol " + name);
+            throw new EnvException("Cannot redefine symbol " + name);
         }
         binding.setIndex(bindings.size());
         bindings.add(binding);

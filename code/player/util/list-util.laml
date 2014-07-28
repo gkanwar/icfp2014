@@ -10,9 +10,9 @@
 
 (define list-ref
   (lambda (l index)
-    (if (= index 0)
-        (car l)
-        (list-ref (cdr l) (- index 1)))))
+    (if index
+        (list-ref (cdr l) (- index 1))
+        (car l))))
 
 (define list-size
   (lambda (l)
