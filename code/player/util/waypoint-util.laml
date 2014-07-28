@@ -87,10 +87,6 @@
                      (lambda (dir)
                        (extend-path next-path dir))
                      valid-dirs))
-                  ;; (map
-                  ;;  (lambda (path)
-                  ;;    (dbug (get-path-loc path)))
-                  ;;  new-paths)
                   (define new-frontier
                     (list-extend new-paths (cdr seen-frontier)))
                   (define new-seen-dict

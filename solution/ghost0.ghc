@@ -1,0 +1,261 @@
+; Try to pick the direction that goes closest to the pacman
+
+; grab ghost index
+int 3 ; 0
+mov [0],a ; 1
+
+; 1 is left
+; 255 is right
+; 0 is not following
+
+; store last turns vit info
+mov [2],[4] ; 2
+
+;grab ghost vitality and direction
+int 6 ; 3
+mov [4],a ; 4
+mov [3],b ; 5
+
+jeq 8,[2],[4] ; 6
+mov [1],0 ; 7
+; noVitChange
+
+
+mov [5],0 ; 8
+
+
+
+
+; grab ghost location
+mov a,[0] ; 9
+int 5 ; 10
+mov [6],a ; 11
+mov [7],b ; 12
+
+; grab pacman location
+int 1 ; 13
+mov [8],a ; 14
+mov [9],b ; 15
+
+
+mov b,[6] ; 16
+
+; store check X order in C/D
+jgt 21,a,b ; 17
+mov c,3 ; 18
+mov d,1 ; 19
+mov pc,23 ; 20
+; greaterX
+mov c,1 ; 21
+mov d,3 ; 22
+; endTestX
+
+; calculate the difference in X and Y coordinates
+mov h,25
+jeq 80,0,0
+; absdiff()
+mov [10],a ; 25
+mov a,[9] ; 26
+mov b,[7] ; 27
+
+; store check Y order in E/F
+jlt 32,a,b ; 28
+mov e,2 ; 29
+mov f,0 ; 30
+mov pc,34 ; 31
+; greaterY
+mov e,0 ; 32
+mov f,2 ; 33
+; endTestY
+
+; check if pacman further away in x or y, then store the target Dir 
+mov h,36
+jeq 80,0,0
+; absdiff()
+
+mov [11],a ; 36
+mov b,[10] ; 37
+jeq 40,[4],1 ; 38
+mov pc,46 ; 39
+; frightChanges
+mov g,c ; 40
+mov c,d ; 41
+mov d,g ; 42
+mov g,e ; 43
+mov e,f ; 44
+mov f,g ; 45
+; mainMovement
+jlt 56,b,a ; 46
+; xbigger
+jeq 51,[3],d ; 47
+mov a,c ; 48
+mov h,51
+jeq 86,0,0
+; movDirIfPossible()
+; tryYX
+jeq 64,[3],f ; 51
+mov a,e ; 52
+mov h,55
+jeq 86,0,0
+; movDirIfPossible()
+mov pc,64 ; 55
+
+; ybigger
+jeq 60,[3],f ; 56
+mov a,e ; 57
+mov h,60
+jeq 86,0,0
+; movDirIfPossible()
+; tryXY
+jeq 64,[3],d ; 60
+mov a,c ; 61
+mov h,64
+jeq 86,0,0
+; movDirIfPossible()
+
+; followingSeq
+jeq 67,[1],0 ; 64
+mov h,67
+jeq 114,0,0
+; tryWallFollow()
+
+; setFollow
+mov a,[3] ; 67
+add a,1 ; 68
+mov h,71
+jeq 144,0,0
+; fixABounds()
+mov h,73
+jeq 137,0,0
+; isWallDir()
+jeq 76,a,0 ; 73
+mov [1],1 ; 74
+mov pc,77 ; 75
+; otherDir
+mov [1],255 ; 76
+; afterFollowSet
+mov h,79
+jeq 114,0,0
+; tryWallFollow()
+mov pc,150 ; 79
+
+
+; IN: reg A/B with numbers, reg H with end jump pos
+; OUT: reg A with absolute difference
+; absdiff
+jlt 83,a,b ; 80
+sub a,b ; 81
+mov pc,85 ; 82
+; absdiffb
+sub b,a ; 83
+mov a,b ; 84
+; absdiffrtn
+mov pc,h ; 85
+
+
+
+
+;IN reg A with direction to try
+; movDirIfPossible
+mov [12],h ; 86
+mov [13],a ; 87
+mov h,90
+jeq 98,0,0
+; getDirMod()
+add a,[6] ; 90
+add b,[7] ; 91
+
+int 7 ; 92
+jeq 97,a,0 ; 93
+mov a,[13] ; 94
+int 0 ; 95
+mov pc,150 ; 96
+; wall
+mov pc,[12] ; 97
+
+;IN reg A with direction
+;OUT reg A/B with X/Y modification vals
+; getDirMod
+jeq 108,0,a ; 98
+jeq 105,1,a ; 99
+jeq 111,2,a ; 100
+jeq 102,3,a ; 101
+; leftDir
+mov a,255 ; 102
+mov b,0 ; 103
+mov pc,h
+; rightDir
+mov a,1  ; 105
+mov b,0 ; 106
+mov pc,h
+; upDir
+mov a,0 ; 108
+mov b,255 ; 109
+mov pc,h
+; downDir
+mov a,0 ; 111
+mov b,1 ; 112
+mov pc,h
+
+; tryWallFollow
+mov [5],1 ; 114
+mov [12],h ; 115
+mov a,[3] ; 116
+sub a,[1] ; 117
+mov h,120
+jeq 144,0,0
+; fixABounds()
+mov h,122
+jeq 86,0,0
+; movDirIfPossible()
+add a,[1] ; 122
+mov h,125
+jeq 144,0,0
+; fixABounds()
+mov h,127
+jeq 86,0,0
+; movDirIfPossible()
+add a,[1] ; 127
+mov h,130
+jeq 144,0,0
+; fixABounds()
+mov h,132
+jeq 86,0,0
+; movDirIfPossible()
+add a,[1] ; 132
+mov h,135
+jeq 144,0,0
+; fixABounds()
+mov h,137
+jeq 86,0,0
+; movDirIfPossible()
+
+; IN reg A with a direction to check
+; OUT rg A with 0 if wall, something else otherwise
+; isWallDir
+mov [14],h ; 137
+mov h,140
+jeq 98,0,0
+; getDirMod()
+add a,[6] ; 140
+add b,[7] ; 141
+int 7 ; 142
+mov pc,[14] ; 143
+
+; fixABounds
+jgt 148,a,254 ; 144
+jlt 149,a,4 ; 145
+mov a,0 ; 146
+mov pc,149 ; 147
+; tooBigBound
+mov a,3 ; 148
+; boundsOkay
+mov pc,h
+
+
+; endTick
+jeq 152,[5],1 ; 150
+mov [1],0 ; 151
+; realEnd
+hlt ; 152
+
