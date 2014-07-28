@@ -7,10 +7,26 @@ import laml.compiler.Line;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class CodeSequence {
-    public List<Line> code;
+    private List<Line> code;
 
     public CodeSequence() {
         code = new ArrayList<Line>();
+    }
+
+    public void addAll(CodeSequence otherCode) {
+        code.addAll(otherCode.getLines());
+    }
+
+    public void addAll(List<Line> lines) {
+        code.addAll(lines);
+    }
+
+    public void add(Line line) {
+        code.add(line);
+    }
+
+    public List<Line> getLines() {
+        return code;
     }
 
     /**

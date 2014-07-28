@@ -13,9 +13,9 @@ import laml.compiler.Line;
 public class ParserFunction implements ParserLabeledBlock {
     private String name;
     private EnvFrame env;
-    private CodeSequence body;
+    private ParserDefinition body;
 
-    public ParserFunction(String name, EnvFrame env, CodeSequence body) {
+    public ParserFunction(String name, EnvFrame env, ParserDefinition body) {
         this.name = name;
         this.env = env;
         this.body = body;
@@ -36,7 +36,7 @@ public class ParserFunction implements ParserLabeledBlock {
 
         // Body
         bodyFunc.addCodeSequence(env.buildEnvDefinitions(name, bodyLabel));
-        bodyFunc.addCodeSequence(body);
+        bodyFunc.addCodeSequence(body.code);
         bodyFunc.addLine(Line.makeRtn(bodyLabel + " return"));
         out.add(bodyFunc);
 

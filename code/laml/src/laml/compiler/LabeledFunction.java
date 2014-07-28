@@ -13,20 +13,20 @@ public class LabeledFunction {
     public LabeledFunction(String label) {
         this.label = label;
         body = new CodeSequence();
-        body.code.add(new Line(new ArrayList<Token>(), label));
+        body.add(new Line(new ArrayList<Token>(), label));
         numInstructions = 0;
     }
 
     public void addLine(Line line) {
-        body.code.add(line);
+        body.add(line);
         if (!line.isEmpty()) {
             numInstructions++;
         }
     }
 
     public void addCodeSequence(CodeSequence seq) {
-        body.code.addAll(seq.code);
-        for (Line l : seq.code) {
+        body.addAll(seq.getLines());
+        for (Line l : seq.getLines()) {
             if (!l.isEmpty()) {
                 numInstructions++;
             }

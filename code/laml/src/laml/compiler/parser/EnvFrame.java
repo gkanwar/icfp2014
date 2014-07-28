@@ -21,30 +21,26 @@ public class EnvFrame {
      * never removed or overwritten, so the index and type can be final safely.
      */
     public static class Binding {
-        public enum ParserDataType {
-            INTEGER, PAIR, CLOSURE
-        }
 
         public int index;
         public final String name;
-        public final ParserDataType type;
         // GCC code which should put the desired value on top of the data stack
-        public CodeSequence definition;
+        public ParserDefinition definition;
 
         public Binding(String name, ParserDataType type) {
             this.name = name;
-            this.type = type;
             // Start with an empty definition -- fill this in once the binding
             // is complete. This allows recursive definitions and also argument
             // binding for lamdbas. It's a bit of a hack, but not too bad.
-            this.definition = new CodeSequence();
+            this.definition = new ParserDefinition();
+            this.definition.setReturnType(type);
         }
 
-        public void setDefinition(CodeSequence definition) {
+        public void setDefinition(ParserDefinition definition) {
             this.definition = definition;
-            if (definition.code.size() > 0) {
+            if (definition.code.getLines().size() > 0) {
                 // Annotate the variable definition
-                definition.code.get(0).setComment("Define " + name);
+                definition.code.getLines().get(0).setComment("Define " + name);
             }
         }
 
@@ -116,14 +112,14 @@ public class EnvFrame {
     }
 
     /**
-     * Finds the variable index of the symbol in the nearest enclosing
-     * environment.
+     * Finds the variable binding of the symbol in the nearest enclosing
+     * environment and returns it.
      */
-    public int findBindingIndex(String name) throws EnvException {
+    public Binding getBinding(String name) throws EnvException {
         if (bindingMap.containsKey(name)) {
-            return bindingMap.get(name).index;
+            return bindingMap.get(name);
         } else if (parent != null) {
-            return parent.findBindingIndex(name);
+            return parent.getBinding(name);
         } else {
             throw new EnvException(
                     "Cannot find binding index for symbol " + name);
@@ -143,11 +139,11 @@ public class EnvFrame {
         CodeSequence c = new CodeSequence();
         // Load an initial 0 for each symbol
         for (Binding binding : bindings) {
-            c.code.add(Line.makeLdc(0, "Symbol " + binding.name +
+            c.add(Line.makeLdc(0, "Symbol " + binding.name +
                     " init for " + headerLabel));
         }
-        c.code.add(Line.makeLdf(bodyLabel, "Load " + bodyLabel));
-        c.code.add(Line.makeAp(bindings.size(), "Call " + bodyLabel));
+        c.add(Line.makeLdf(bodyLabel, "Load " + bodyLabel));
+        c.add(Line.makeAp(bindings.size(), "Call " + bodyLabel));
         return c;
     }
 
@@ -160,9 +156,9 @@ public class EnvFrame {
     public CodeSequence buildEnvDefinitions(String headerLabel, String bodyLabel) {
         CodeSequence c = new CodeSequence();
         for (Binding binding : bindings) {
-            c.code.addAll(binding.definition.code);
+            c.addAll(binding.definition.code.getLines());
             // Store the definition into the binding index
-            c.code.add(Line.makeSt(0, binding.index,
+            c.add(Line.makeSt(0, binding.index,
                     "End define " + binding.name));
         }
         return c;

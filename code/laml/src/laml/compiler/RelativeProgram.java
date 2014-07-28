@@ -31,7 +31,7 @@ public class RelativeProgram {
         }
 
         labels.put(function.label, nextAddr);
-        lines.addAll(function.getCode().code);
+        lines.addAll(function.getCode().getLines());
         nextAddr += function.getNumInstructions();
     }
 

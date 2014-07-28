@@ -1,0 +1,14 @@
+;;;; -*- mode: scheme -*-
+;;;; Test type checking errors (this should not compile).
+
+(define x
+  (lambda (a b c)
+    (list a b c)))
+;; Expects 3 arguments!
+;; (x 1 2)
+(x 1 2 3)
+
+;; Test THUNK works okay
+;; Should return [1,2,3]
+((lambda (THUNK)
+   (list 1 2 3)))

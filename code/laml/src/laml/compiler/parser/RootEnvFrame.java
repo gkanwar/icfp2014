@@ -1,7 +1,5 @@
 package laml.compiler.parser;
 
-import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
-
 /**
  * Adds the program inputs to the global namespace. All other environment frames
  * should derive from this.
@@ -9,10 +7,10 @@ import laml.compiler.parser.EnvFrame.Binding.ParserDataType;
 public class RootEnvFrame extends EnvFrame {
     public RootEnvFrame() {
         super();
-        Binding worldMapBinding = new Binding("WORLD-STATE",
-                ParserDataType.INTEGER);
-        Binding ghostCodeBinding = new Binding("GHOST-CODE",
-                ParserDataType.INTEGER);
+        Binding worldMapBinding = new Binding("WORLD-STATE", ParserDataType
+                .integerType());
+        Binding ghostCodeBinding = new Binding("GHOST-CODE", ParserDataType
+                .integerType());
         worldMapBinding.setIndex(0);
         ghostCodeBinding.setIndex(1);
         bindings.add(worldMapBinding);
