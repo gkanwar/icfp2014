@@ -51,7 +51,6 @@
 (define bfs
   (lambda (target)
     (begin
-      (dbug target)
       (define bfs-helper
         (lambda (seen-dict frontier)
           ;; seen-dict - which squares we've visited associated with their paths
@@ -63,12 +62,7 @@
               (lambda (seen-frontier next-path)
                 ;; seen-frontier is a tuple of (seen-dict, new-frontier)
                 (begin
-                  (define prev-loc
-                    (begin
-                      (dbug 450)
-                      (dbug seen-frontier)
-                      (dbug next-path)
-                      (get-path-loc next-path)))
+                  (define prev-loc (get-path-loc next-path))
                   (define prev-dirs (get-path-dirs next-path))
                   (define valid-dirs
                     (filter
@@ -93,6 +87,10 @@
                      (lambda (dir)
                        (extend-path next-path dir))
                      valid-dirs))
+                  ;; (map
+                  ;;  (lambda (path)
+                  ;;    (dbug (get-path-loc path)))
+                  ;;  new-paths)
                   (define new-frontier
                     (list-extend new-paths (cdr seen-frontier)))
                   (define new-seen-dict
@@ -103,28 +101,15 @@
                         (get-path-loc path))
                       new-paths)
                      new-paths))
-                  (define out-accum (tuple new-seen-dict new-frontier))
-                  (dbug 451)
-                  (dbug new-seen-dict)
-                  (dbug new-frontier)
-                  (dbug out-accum)
-                  out-accum
-                  )))
+                  (tuple new-seen-dict new-frontier))))
             (define new-seen-frontier
               (fold-left expand-path (tuple seen-dict nil) frontier))
             (if (null? frontier)
-                (begin
-                  ;; Done! We've seen everything
-                  (dbug 777)
-                  seen-dict)
-                (begin
-                  (dbug 409)
-                  (dbug new-seen-frontier)
-                  (bfs-helper (car new-seen-frontier) (cdr new-seen-frontier)))))))
+                ;; Done! We've seen everything
+                seen-dict
+                (bfs-helper (car new-seen-frontier) (cdr new-seen-frontier))))))
       (define seen-dict
-        (begin
-          (dbug 400)
-          (bfs-helper empty-dict (list (make-path target nil)))))
+        (bfs-helper empty-dict (list (make-path target nil))))
       (map
        (lambda (kv-pair)
          (begin
