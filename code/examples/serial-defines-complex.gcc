@@ -1,33 +1,33 @@
-DUM 4 ; main_$body$ bindings
-LDF 25 ; Define y
-LDF 25 ; Define y
-LDC 1 ; Define b
-LDC 2 ; 
-LDC 3 ; 
-LDC 0 ; 
-CONS ; 
-CONS ; 
-CONS ; 
-LDC 1 ; Define b
-LDC 2 ; 
-LDC 3 ; 
-LDC 0 ; 
-CONS ; 
-CONS ; 
-CONS ; 
-CAR ; 
-LDF 21 ; Load main_$body$ body
-RAP 4 ; Call main_$body$ body
+LDC 0 ; Symbol x init for main
+LDC 0 ; Symbol y init for main
+LDC 0 ; Symbol a init for main
+LDC 0 ; Symbol b init for main
+LDF 7 ; Load main_$body$
+AP 4 ; Call main_$body$
 RTN ; main return
 
+LDF 26 ; Define x
+ST 0 0 ; End define x
+LD 0 0 ; Define y
+ST 0 1 ; End define y
+LDC 1 ; Define a
+LDC 2 ; 
+LDC 3 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+CONS ; 
+ST 0 2 ; End define a
+LD 0 2 ; Define b
+CAR ; 
+ST 0 3 ; End define b
 LD 0 3 ; Var b
 LD 0 1 ; Var y
 AP 1 ; Func call y
 RTN ; main_$body$ return
 
-DUM 0 ; func0_$body$ bindings
-LDF 29 ; Load func0_$body$ body
-RAP 0 ; Call func0_$body$ body
+LDF 29 ; Load func0_$body$
+AP 0 ; Call func0_$body$
 RTN ; func0 return
 
 LD 1 0 ; Var n

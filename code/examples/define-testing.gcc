@@ -1,0 +1,49 @@
+LDC 0 ; Symbol init for main
+LDF 4 ; Load main_$body$
+AP 1 ; Call main_$body$
+RTN ; main return
+
+LDF 32 ; Define test-func
+ST 0 0 ; End define test-func
+LDC 10 ; 
+LDC 7 ; 
+LDC 5 ; 
+LDC 6 ; 
+LDC 0 ; 
+CONS ; 
+CONS ; 
+LD 0 0 ; Var test-func
+AP 1 ; Func call test-func
+AP 1 ; Func call (test-func (list 5 6 ) )
+AP 1 ; Func call ((test-func (list 5 6 ) ) 7 )
+RTN ; main_$body$ return
+
+LDF 21 ; Load func0_$body$
+AP 0 ; Call func0_$body$
+RTN ; func0 return
+
+LD 1 0 ; Var k
+LD 3 0 ; Var n
+LD 4 0 ; Var first
+MUL ; 
+MUL ; 
+RTN ; func0_$body$ return
+
+LDF 30 ; Load func1_$body$
+AP 0 ; Call func1_$body$
+RTN ; func1 return
+
+LDF 18 ; 
+RTN ; func1_$body$ return
+
+LDC 0 ; Symbol init for func2
+LDF 36 ; Load func2_$body$
+AP 1 ; Call func2_$body$
+RTN ; func2 return
+
+LD 1 0 ; Define first
+CAR ; 
+ST 0 0 ; End define first
+LDF 27 ; 
+RTN ; func2_$body$ return
+
