@@ -2,38 +2,43 @@ Build instructions
 ==================
 
 Lambda-Man AI:
-1. Build Lambda-Man Lisp (LaML) compiler written in Java. The source is located in code/laml/src. The project can be opened in Eclipse or javac can be used. Generated class files should be placed in code/laml/bin so that the helper Shell scripts to run the compiler operate properly.
-2. Use the build.sh helper to run the compiler on the power-pill-waypoint Lambda-Man instance (or the wall-follower player). The build file is located alongside each player.
-  $ code/laml/build.sh code/player/power-pill-waypoint/BUILD > output.gcc
-3. Execute the GCC code as desired.
+--------------
+
+1.  Build Lambda-Man Lisp (LaML) compiler written in Java. The source is located in code/laml/src. The project can be opened in Eclipse or javac can be used. Generated class files should be placed in code/laml/bin so that the helper Shell scripts to run the compiler operate properly.
+2.  Use the build.sh helper to run the compiler on the power-pill-waypoint Lambda-Man instance (or the wall-follower player). The build file is located alongside each player.
+    <pre>$ code/laml/build.sh code/player/power-pill-waypoint/BUILD > output.gcc</pre>
+3.  Execute the GCC code as desired.
 
 Ghost AI:
-1. Build the Ghost Translator compiler written in C++.
-  $ g++ -std=c++11 translate.cpp
-2. Compiler the tracker.ghc Ghost code.
-  $ build.sh > output.ghc
-3. Execute the GHC code as desired.
+---------
+
+1.  Build the Ghost Translator compiler written in C++.
+    <pre>$ g++ -std=c++11 translate.cpp</pre>
+2.  Compiler the tracker.ghc Ghost code.
+    <pre>$ build.sh > output.ghc</pre>
+3.  Execute the GHC code as desired.
 
 Basic approach
 ==============
 
 Unfortunately I'm too tired to write much here... :P
+
 The basic approach we took was to attack the Lambda-Man AI first, as we weren't
-sure if we'd be required to make Ghost AIs initially. It was pretty clear that
+sure if we'd be required to make Ghost AIs at the start of the competition. It was pretty clear that
 we should write a compiler from a Lisp-like language into the GCC assembly
-code. Since we were most familiar with MIT Scheme (being an all-MIT) team, we
+code. Since we were most familiar with MIT Scheme (being an all-MIT team), we
 decided to write a language that looked a lot like MIT Scheme. Handily, this
 allowed us to use Emacs' lisp formatting to nicely tab and syntax-highlight
 our code.
 
 The compiler itself looks pretty standard. We chose Java as the language for
-the complier as the most common language on our team. This turned out to be a
+the complier, it being the most common language on our team. This turned out to be a
 pretty reasonable choice, as using Eclipse meant that writing the complier
-itself was pretty quick as we had error checking on the fly.
+itself was pretty quick with the IDE's real-time error checking'.
 
 We wrote the core of the compiler (lexer, parser, address translation
 post-processing) in the first day. A few larger pieces of the compiler
-(fixing up serial defines, function type-checking) were adding later. With this
+(fixing up serial defines, function type-checking) were added later. With this
 solidly in place, we were able to hack out a lot of the boilerplate Scheme
 code which serves as the foundation for our Lambda-Man AI. You can find this
 boilerplate utility stuff in code/player/util.
@@ -49,7 +54,7 @@ For the AI strategy we were short on time, so we went with a simple one:
 "Eat as many of the power pills as possible". We assume that the power pills
 will be distributed around the map, so we try to walk around eating pills to
 keep us in ghost-destroying mode as much as possible. Ideally, we would have
-likely to try some higher-level strategy with finding and eating as many
+liked to try some higher-level strategy with finding and eating as many
 regular pills as possible, but we ran short on time implementing our BFS.
 
 Ghost AI
